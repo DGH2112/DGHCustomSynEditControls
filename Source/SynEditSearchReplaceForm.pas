@@ -5,10 +5,10 @@
 
  @Version 1.0
  @Author  David Hoyle
- @Date    21 Jan 2018
+ @Date    26 Jan 2018
 
  **)
-Unit GitEditor.SearchReplaceForm;
+Unit SynEditSearchReplaceForm;
 
 Interface
 
@@ -90,7 +90,7 @@ Uses
   System.UITypes,
   System.IniFiles,
   System.Math,
-  GitEditor.ConfirmationDlgForm;
+  SynEditConfirmationDlgForm;
 
 {$R *.dfm}
 
