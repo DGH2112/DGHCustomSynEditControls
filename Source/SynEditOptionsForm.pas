@@ -44,8 +44,8 @@ Type
     FParent     : TSynCustomHighlighter;
   Protected
   Public
-    Constructor Create(Const Name: String; Fore, Back: TColor; Style: TFontStyles;
-      Attr : TSynHighlighterAttributes; Parent : TSynCustomHighlighter);
+    Constructor Create(Const Name: String; Const Fore, Back: TColor; Const Style: TFontStyles;
+      Const Attr : TSynHighlighterAttributes; Const Parent : TSynCustomHighlighter);
     (**
       This property reads and writes the Attribute Name
       @precon  None
@@ -99,9 +99,9 @@ Type
   Public
     Constructor Create;
     Destructor Destroy; Override;
-    Function Add(Attr : TSynHighlighterAttributes;
-      Parent : TSynCustomHighlighter) : TAttribute;
-    Procedure Update(boolIncTags : Boolean);
+    Function Add(Const Attr : TSynHighlighterAttributes;
+      Const Parent : TSynCustomHighlighter) : TAttribute;
+    Procedure Update(Const boolIncTags : Boolean);
   End;
 
   (** This class represents the form interface for editing the editor
@@ -155,15 +155,15 @@ Type
     { Private declarations }
     FAttributes : TAttributes;
     FUpdating : Boolean;
-    Procedure AddHighlighter(Highlighter : TSynCustomHighlighter);
-    Procedure InitialiseDlg(Editor: TSynEdit);
-    Procedure FinaliseDlg(Editor: TSynEdit; boolIncTag: Boolean);
+    Procedure AddHighlighter(Const Highlighter : TSynCustomHighlighter);
+    Procedure InitialiseDlg(Const Editor: TSynEdit);
+    Procedure FinaliseDlg(Const Editor: TSynEdit; Const boolIncTag: Boolean);
   Public
     { Public declarations }
     Constructor Create(AOwner : TComponent); Override;
     Destructor Destroy; Override;
-    Class Function Execute(OwnerForm : TForm; Editor : TSynEdit;
-      boolIncTag : Boolean) : Boolean;
+    Class Function Execute(Const OwnerForm : TForm; Const Editor : TSynEdit;
+      Const boolIncTag : Boolean) : Boolean;
   End;
 
 Implementation
@@ -225,27 +225,28 @@ Var
   @precon  None.
   @postcon Adds fixed width fonts to the combo box.
 
-  @param   LogFont    as a PEnumLogFontEx
-  @param   TextMetric as a PNewTextMetric
-  @param   FontType   as an Integer
-  @param   lParam     as a LPARAM
-  @return  an Integer   
+  @param   LogFont    as a PEnumLogFontEx as a constant
+  @param   TextMetric as a PNewTextMetric as a constant
+  @param   FontType   as an Integer as a constant
+  @param   lParam     as a lParam as a constant
+  @return  an Integer
 
 **)
-Function FontEnumExProc(LogFont : PEnumLogFontEx; TextMetric : PNewTextMetric; //FI:O804
-  FontType: Integer; lParam: lParam): Integer; StdCall; //FI:O804
+Function FontEnumExProc(Const LogFont : PEnumLogFontEx; Const TextMetric : PNewTextMetric; //FI:O804
+  Const FontType: Integer; Const lParam: lParam): Integer; StdCall; //FI:O804
 
 Var
   S : String;
+  ELF : TEnumLogFontEx;
 
 Begin
-  With TEnumLogFontEx(LogFont^) Do
-    If elfLogFont.lfPitchAndFamily And FIXED_PITCH > 0 Then
-      Begin
-        S := elfLogFont.lfFaceName;
-        If FontNames.Items.IndexOf(S) = -1 Then
-          FontNames.Items.AddObject(S, TObject(FontType));
-      End;
+  ELF := TEnumLogFontEx(LogFont^);
+  If ELF.elfLogFont.lfPitchAndFamily And FIXED_PITCH > 0 Then
+    Begin
+      S := ELF.elfLogFont.lfFaceName;
+      If FontNames.Items.IndexOf(S) = -1 Then
+        FontNames.Items.AddObject(S, TObject(FontType));
+    End;
   Result := 1;
 End;
 
@@ -257,16 +258,16 @@ End;
   @postcon Creates an instance of a TAttribute class.
 
   @param   Name   as a String as a constant
-  @param   Fore   as a TColor
-  @param   Back   as a TColor
-  @param   Style  as a TFontStyles
-  @param   Attr   as a TSynHighlighterAttributes
-  @param   Parent as a TSynCustomHighlighter
+  @param   Fore   as a TColor as a constant
+  @param   Back   as a TColor as a constant
+  @param   Style  as a TFontStyles as a constant
+  @param   Attr   as a TSynHighlighterAttributes as a constant
+  @param   Parent as a TSynCustomHighlighter as a constant
 
 **)
-Constructor TAttribute.Create(Const Name: String; Fore, Back: TColor;
-  Style : TFontStyles; Attr : TSynHighlighterAttributes;
-  Parent : TSynCustomHighlighter);
+Constructor TAttribute.Create(Const Name: String; Const Fore, Back: TColor;
+  Const Style : TFontStyles; Const Attr : TSynHighlighterAttributes;
+  Const Parent : TSynCustomHighlighter);
 
 Begin
   FName       := Name;
@@ -279,21 +280,18 @@ End;
 
 (**
 
-  This method adds a TAttrbute to the collection based on the passed
-  TSynHighlighterAttributes.
+  This method adds a TAttrbute to the collection based on the passed TSynHighlighterAttributes.
 
-  @precon  Attr and Parent must be valid instanes of an attribute and
-           highlighter respectively.
-  @postcon Adds a TAttrbute to the collection based on the passed
-           TSynHighlighterAttributes.
+  @precon  Attr and Parent must be valid instanes of an attribute and highlighter respectively.
+  @postcon Adds a TAttrbute to the collection based on the passed TSynHighlighterAttributes.
 
-  @param   Attr   as a TSynHighlighterAttributes
-  @param   Parent as a TSynCustomHighlighter
+  @param   Attr   as a TSynHighlighterAttributes as a constant
+  @param   Parent as a TSynCustomHighlighter as a constant
   @return  a TAttribute
 
 **)
-Function TAttributes.Add(Attr : TSynHighlighterAttributes;
-  Parent : TSynCustomHighlighter) : TAttribute;
+Function TAttributes.Add(Const Attr : TSynHighlighterAttributes;
+  Const Parent : TSynCustomHighlighter) : TAttribute;
 
 Begin
   Result := Nil;
@@ -340,43 +338,42 @@ End;
 (**
 
   This method updates the referenced highlighter attributes and highlighter.
-  
+
   @precon  None.
   @postcon Updates the referenced highlighter attributes and highlighter.
 
-  @param   boolIncTags as a Boolean
+  @param   boolIncTags as a Boolean as a constant
 
 **)
-Procedure TAttributes.Update(boolIncTags : Boolean);
+Procedure TAttributes.Update(Const boolIncTags : Boolean);
 
 Var
   i : Integer;
+  A: TAttribute;
 
 Begin
   For i := 0 To FAttributes.Count - 1 Do
-    With FAttributes[i] As TAttribute Do
-      Begin
-        Attribute.Foreground := ForeColour;
-        Attribute.Background := BackColour;
-        Attribute.Style      := Style;
-        If boolIncTags Then
-          Parent.Tag := Parent.Tag + 1;
-      End;
+    Begin
+      A := FAttributes[i] As TAttribute;
+      A.Attribute.Foreground := A.ForeColour;
+      A.Attribute.Background := A.BackColour;
+      A.Attribute.Style      := A.Style;
+      If boolIncTags Then
+        A.Parent.Tag := A.Parent.Tag + 1;
+    End;
 End;
 
 (**
 
-  This method add the attributes of the given highlighters to the attribute
-  collection.
-  
+  This method add the attributes of the given highlighters to the attribute collection.
+
   @precon  Highlighter must be a valid instance.
-  @postcon Add the attributes of the given highlighters to the attribute
-           collection.
-           
-  @param   Highlighter as a TSynCustomHighlighter
+  @postcon Add the attributes of the given highlighters to the attribute collection.
+
+  @param   Highlighter as a TSynCustomHighlighter as a constant
 
 **)
-Procedure TfrmEditorOptions.AddHighlighter(Highlighter : TSynCustomHighlighter);
+Procedure TfrmEditorOptions.AddHighlighter(Const Highlighter : TSynCustomHighlighter);
 
 Var
   A : TAttribute;
@@ -399,9 +396,10 @@ End;
   This is the constructor method for the TfrmEditorOptions class.
 
   @precon  None.
-  @postcon Creates an instance of the form and initailises the interface
-           controls.
+  @postcon Creates an instance of the form and initailises the interface controls.
 
+  @nocheck MissingCONSTInParam
+  
   @param   AOwner as a TComponent
 
 **)
@@ -446,28 +444,31 @@ End;
   @precon  Editor must be a valid instance of a TSynEdit cvontrol.
   @postcon nvokes a form for editing the given instance of the TSynEdit control.
 
-  @param   OwnerForm  as a TForm
-  @param   Editor     as a TSynEdit
-  @param   boolIncTag as a Boolean
+  @param   OwnerForm  as a TForm as a constant
+  @param   Editor     as a TSynEdit as a constant
+  @param   boolIncTag as a Boolean as a constant
   @return  a Boolean
 
 **)
-Class Function TfrmEditorOptions.Execute(OwnerForm : TForm; Editor : TSynEdit;
-  boolIncTag : Boolean) : Boolean;
+Class Function TfrmEditorOptions.Execute(Const OwnerForm : TForm; Const Editor : TSynEdit;
+  Const boolIncTag : Boolean) : Boolean;
+
+Var
+  F: TfrmEditorOptions;
 
 Begin
   Result := False;
-  With TfrmEditorOptions.Create(OwnerForm) Do
-    Try
-      InitialiseDlg(Editor);
-      If ShowModal = mrOK Then
-        Begin
-          FinaliseDlg(Editor, boolIncTag);
-          Result := True;
-        End;
-    Finally
-      Free;
-    End;
+  F := TfrmEditorOptions.Create(OwnerForm);
+  Try
+    F.InitialiseDlg(Editor);
+    If F.ShowModal = mrOK Then
+      Begin
+        F.FinaliseDlg(Editor, boolIncTag);
+        Result := True;
+      End;
+  Finally
+    F.Free;
+  End;
 End;
 
 (**
@@ -546,17 +547,16 @@ Begin
 
 (**
 
-  This method loads the dialogue with settings from the given SynEdit control and its associated
+  This method loads the dialogue with settings from the given SynEdit control and its associated 
   highlighter.
 
   @precon  Editor must be a valid instance.
-  @postcon The dialogue is loaded with the SynEdits configuration and its highlighters
-           configuration.
+  @postcon The dialogue is loaded with the SynEdits configuration and its highlighters configuration.
 
-  @param   Editor as a TSynEdit
+  @param   Editor as a TSynEdit as a constant
 
 **)
-Procedure TfrmEditorOptions.InitialiseDlg(Editor: TSynEdit);
+Procedure TfrmEditorOptions.InitialiseDlg(Const Editor: TSynEdit);
 
 Var
   i: TSynEditorOption;
@@ -618,18 +618,17 @@ End;
 
 (**
 
-  This method saves the dialogue settings to the given SynEdit control and its associated
-  highlighter.
+  This method saves the dialogue settings to the given SynEdit control and its associated highlighter.
 
   @precon  Editor must be a valid instance.
-  @postcon The dialogues settings are saveed to the SynEdits configuration and its highlighters
+  @postcon The dialogues settings are saveed to the SynEdits configuration and its highlighters 
            configuration.
 
-  @param   Editor     as a TSynEdit
-  @param   boolIncTag as a Boolean
+  @param   Editor     as a TSynEdit as a constant
+  @param   boolIncTag as a Boolean as a constant
 
 **)
-Procedure TfrmEditorOptions.FinaliseDlg(Editor: TSynEdit; boolIncTag: Boolean);
+Procedure TfrmEditorOptions.FinaliseDlg(Const Editor: TSynEdit; Const boolIncTag: Boolean);
 
 Var
   i : TSynEditorOption;
