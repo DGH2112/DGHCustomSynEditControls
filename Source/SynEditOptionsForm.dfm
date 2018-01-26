@@ -454,9 +454,45 @@ object frmEditorOptions: TfrmEditorOptions
       DesignSize = (
         516
         497)
-      object chxLineNumbers: TCheckBox
+      object lblModifiedColour: TLabel
         Left = 4
-        Top = 299
+        Top = 94
+        Width = 116
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Modified Line Colour'
+        FocusControl = cbxModifiedColour
+      end
+      object lblSavedColour: TLabel
+        Left = 4
+        Top = 124
+        Width = 103
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Saved Line Colour'
+        FocusControl = cbxSavedColour
+      end
+      object lblModifiedBarWidth: TLabel
+        Left = 5
+        Top = 155
+        Width = 135
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Modified Line Bar &Width'
+        FocusControl = edtModifiedBarWidth
+      end
+      object chxLineNumbers: TCheckBox
+        Left = 5
+        Top = 62
         Width = 507
         Height = 21
         Margins.Left = 4
@@ -465,7 +501,86 @@ object frmEditorOptions: TfrmEditorOptions
         Margins.Bottom = 4
         Anchors = [akLeft, akTop, akRight]
         Caption = 'S&how Line Numbers in the Editor Gutter'
+        TabOrder = 2
+      end
+      object chkAutoSize: TCheckBox
+        Left = 4
+        Top = 4
+        Width = 507
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akLeft, akTop, akRight]
+        Caption = '&Auto Size Editor Gutter'
         TabOrder = 0
+      end
+      object chkShowModifications: TCheckBox
+        Left = 5
+        Top = 33
+        Width = 507
+        Height = 21
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'S&how Line Modifications in the Editor Gutter'
+        TabOrder = 1
+      end
+      object cbxModifiedColour: TColorBox
+        Left = 288
+        Top = 91
+        Width = 224
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+        Anchors = [akTop, akRight]
+        TabOrder = 3
+      end
+      object cbxSavedColour: TColorBox
+        Left = 288
+        Top = 121
+        Width = 224
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+        Anchors = [akTop, akRight]
+        TabOrder = 4
+      end
+      object upModifiedBarWidth: TUpDown
+        Left = 493
+        Top = 151
+        Width = 20
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akTop, akRight]
+        Associate = edtModifiedBarWidth
+        Max = 1024
+        TabOrder = 6
+      end
+      object edtModifiedBarWidth: TEdit
+        Left = 288
+        Top = 151
+        Width = 205
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akTop, akRight]
+        TabOrder = 5
+        Text = '0'
       end
     end
     object tabBehaviour: TTabSheet

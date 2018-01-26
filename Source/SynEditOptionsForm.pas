@@ -7,12 +7,6 @@
   @Author  David Hoyle
   @Date    20 Jan 2018
 
-  @todo Add FEditor->Gutter->ShowModification
-  @todo Add FEditor->Gutter->AutoSize
-  @todo Add FEditor->Gutter->ModificationColorModified
-  @todo Add FEditor->Gutter->ModificationColorSaved
-  @todo Add FEditor->Gutter->ModificationBarWidth
-
   @todo Add Key Commands
 
 **)
@@ -170,6 +164,15 @@ Type
     edtMaxScrollWidth: TEdit;
     lblMaxScrollWidth: TLabel;
     udMaxScrollWidth: TUpDown;
+    chkAutoSize: TCheckBox;
+    chkShowModifications: TCheckBox;
+    cbxModifiedColour: TColorBox;
+    lblModifiedColour: TLabel;
+    cbxSavedColour: TColorBox;
+    lblSavedColour: TLabel;
+    upModifiedBarWidth: TUpDown;
+    edtModifiedBarWidth: TEdit;
+    lblModifiedBarWidth: TLabel;
     Procedure lbAttributesClick(Sender: TObject);
     Procedure AttributeChange(Sender: TObject);
   Private
@@ -178,7 +181,15 @@ Type
     FUpdating : Boolean;
     Procedure AddHighlighter(Const Highlighter : TSynCustomHighlighter);
     Procedure InitialiseDlg(Const Editor: TSynEdit);
+    Procedure InitialiseEditor(Const Editor: TSynEdit);
+    Procedure InitialiseGutter(Const Editor: TSynEdit);
+    Procedure InitialiseBehaviour(Const Editor: TSynEdit);
+    Procedure InitialiseHighlighter(Const Editor: TSynEdit);
     Procedure FinaliseDlg(Const Editor: TSynEdit; Const boolIncTag: Boolean);
+    Procedure FinaliseEditor(Const Editor: TSynEdit);
+    Procedure FinaliseGutter(Const Editor: TSynEdit);
+    Procedure FinaliseBehaviour(Const Editor: TSynEdit);
+    Procedure FinaliseHighlighter(Const boolIncTag : Boolean);
   Public
     { Public declarations }
     Constructor Create(AOwner : TComponent); Override;
@@ -430,6 +441,25 @@ End;
 **)
 Procedure TfrmEditorOptions.AttributeChange(Sender: TObject);
 
+  (**
+
+    This procedure updates the types of the attribute with the given style if boolInclude is true.
+
+    @precon  A must be a valid instance.
+    @postcon The style is added to the attribute if required.
+
+    @param   A           as a TAttribute as a constant
+    @param   eStyle      as a TFontStyle as a constant
+    @param   boolInclude as a Boolean as a constant
+
+  **)
+  Procedure UpdateStyle(Const A : TAttribute; Const eStyle : TFontStyle; Const boolInclude : Boolean);
+
+  Begin
+    If boolInclude Then
+      A.Style := A.Style + [eStyle];
+  End;
+
 Var
   A : TAttribute;
 
@@ -443,17 +473,13 @@ Begin
             A.ForeColour := cbxAttrForeColour.Selected;
             A.BackColour := cbxAttrBackColour.Selected;
             A.Style := [];
-            If cbxBold.Checked Then
-              A.Style := A.Style + [fsBold];
-            If cbxItalic.Checked Then
-              A.Style := A.Style + [fsItalic];
-            If cbxUnderlined.Checked Then
-              A.Style := A.Style + [fsUnderline];
-            If cbxStrikeout.Checked Then
-              A.Style := A.Style + [fsStrikeOut];
+            UpdateStyle(A, fsBold, cbxBold.Checked);
+            UpdateStyle(A, fsItalic, cbxItalic.Checked);
+            UpdateStyle(A, fsUnderline, cbxUnderlined.Checked);
+            UpdateStyle(A, fsStrikeOut, cbxStrikeout.Checked);
           End;
       End;
-          End;
+End;
 
 (**
 
@@ -537,6 +563,29 @@ End;
 
 (**
 
+  This method saves the behavioural changes back to the editor.
+
+  @precon  Editor must be a valid instance.
+  @postcon The behavioural aspects of the editor are updated.
+
+  @param   Editor as a TSynEdit as a constant
+
+**)
+Procedure TfrmEditorOptions.FinaliseBehaviour(Const Editor: TSynEdit);
+
+Var
+  i : TSynEditorOption;
+
+Begin
+  For i := Low(TSynEditorOption) To High(TSynEditorOption) Do
+    If clbOptions.Checked[Integer(i)] Then
+      Editor.Options := Editor.Options + [i]
+    Else
+      Editor.Options := Editor.Options - [i];
+End;
+
+(**
+
   This method saves the dialogue settings to the given SynEdit control and its associated highlighter.
 
   @precon  Editor must be a valid instance.
@@ -549,11 +598,26 @@ End;
 **)
 Procedure TfrmEditorOptions.FinaliseDlg(Const Editor: TSynEdit; Const boolIncTag: Boolean);
 
-Var
-  i : TSynEditorOption;
+Begin
+  FinaliseEditor(Editor);
+  FinaliseGutter(Editor);
+  FinaliseBehaviour(Editor);
+  FinaliseHighlighter(boolIncTag);
+End;
+
+(**
+
+  This method saves the editor changes back to the editor.
+
+  @precon  Editor must be a valid instance.
+  @postcon The editor is updated with any changes.
+
+  @param   Editor as a TSynEdit as a constant
+
+**)
+Procedure TfrmEditorOptions.FinaliseEditor(Const Editor: TSynEdit);
 
 Begin
-  // Visual
   Editor.TabWidth := udTabWidth.Position;
   Editor.Color := cbxEditorBackgroundColour.Selected;
   Editor.ActiveLineColor := cbxActiveLineColour.Selected;
@@ -576,17 +640,42 @@ Begin
   Editor.WantTabs := chkWantTabs.Checked;
   Editor.WordWrap := chkWordWrap.Checked;
   Editor.MaxScrollWidth := udMaxScrollWidth.Position;
-  
-  Editor.Gutter.Font.Assign(Editor.Font);
-  Editor.Gutter.ShowLineNumbers := chxLineNumbers.Checked;
+End;
 
-  // Behavioural
-  For i := Low(TSynEditorOption) To High(TSynEditorOption) Do
-    If clbOptions.Checked[Integer(i)] Then
-      Editor.Options := Editor.Options + [i]
-    Else
-      Editor.Options := Editor.Options - [i];
-  // Highlighter
+(**
+
+  This method saves the gutter changes to the editor gutter.
+
+  @precon  Editor must be a valid instance.
+  @postcon The gutter of the editor is updated with any changes.
+
+  @param   Editor as a TSynEdit as a constant
+
+**)
+Procedure TfrmEditorOptions.FinaliseGutter(Const Editor: TSynEdit);
+
+Begin
+  Editor.Gutter.Font.Assign(Editor.Font);
+  Editor.Gutter.AutoSize := chkAutoSize.Checked;
+  Editor.Gutter.ShowModification := chkShowModifications.Checked;
+  Editor.Gutter.ShowLineNumbers := chxLineNumbers.Checked;
+  Editor.Gutter.ModificationColorModified := cbxModifiedColour.Selected;
+  Editor.Gutter.ModificationColorSaved := cbxSavedColour.Selected;
+End;
+
+(**
+
+  This method saves the attribute changes back to the editors highlighter.
+
+  @precon  None.
+  @postcon The highlighter changes are saved back to the editors highlighter.
+
+  @param   boolIncTag as a Boolean as a constant
+
+**)
+Procedure TfrmEditorOptions.FinaliseHighlighter(Const boolIncTag : Boolean);
+
+Begin
   FAttributes.Update(boolIncTag);
 End;
 
@@ -601,20 +690,35 @@ End;
   @param   Editor as a TSynEdit as a constant
 
 **)
-Procedure TfrmEditorOptions.InitialiseDlg(Const Editor: TSynEdit);
-
-Const
-  strMarker = 'Marker';
+Procedure TfrmEditorOptions.InitialiseBehaviour(Const Editor: TSynEdit);
 
 Var
   i: TSynEditorOption;
-  M: TSynMultiSyn;
-  S: TScheme;
-  j: Integer;
-  A: TAttribute;
+  
+Begin
+  For i := Low(TSynEditorOption) To High(TSynEditorOption) Do
+    clbOptions.Checked[Integer(i)] := i In Editor.Options;
+End;
+
+Procedure TfrmEditorOptions.InitialiseDlg(Const Editor: TSynEdit);
 
 Begin
-  // Visual
+  InitialiseEditor(Editor);
+  InitialiseGutter(Editor);
+  InitialiseBehaviour(Editor);
+  InitialiseHighlighter(Editor);
+  InitialiseHighlighter(Editor);
+  If lbAttributes.Items.Count > 0 Then
+    Begin
+      lbAttributes.ItemIndex := 0;
+      lbAttributesClick(Nil);
+    End;
+  PageControl1.ActivePageIndex := 0;
+End;
+
+Procedure TfrmEditorOptions.InitialiseEditor(Const Editor: TSynEdit);
+
+Begin
   udTabWidth.Position := Editor.TabWidth;
   cbxEditorBackgroundColour.Selected := Editor.Color;
   cbxActiveLineColour.Selected := Editor.ActiveLineColor;
@@ -632,12 +736,30 @@ Begin
   chkWantTabs.Checked := Editor.WantTabs;
   chkWordWrap.Checked := Editor.WordWrap;
   udMaxScrollWidth.Position := Editor.MaxScrollWidth;
-  
+End;
+
+Procedure TfrmEditorOptions.InitialiseGutter(Const Editor: TSynEdit);
+
+Begin
+  chkAutoSize.Checked := Editor.Gutter.AutoSize;
+  chkShowModifications.Checked := Editor.Gutter.ShowModification;
   chxLineNumbers.Checked := Editor.Gutter.ShowLineNumbers;
-  // Behavioural
-  For i := Low(TSynEditorOption) To High(TSynEditorOption) Do
-    clbOptions.Checked[Integer(i)] := i In Editor.Options;
-  // Highlighter
+  cbxModifiedColour.Selected := Editor.Gutter.ModificationColorModified;
+  cbxSavedColour.Selected := Editor.Gutter.ModificationColorSaved;
+End;
+
+Procedure TfrmEditorOptions.InitialiseHighlighter(Const Editor: TSynEdit);
+
+Const
+  strMarker = 'Marker';
+
+Var
+  M: TSynMultiSyn;
+  S: TScheme;
+  j: Integer;
+  A: TAttribute;
+
+Begin
   If Assigned(Editor.Highlighter) Then
     Begin
       If Editor.Highlighter Is TSynMultiSyn Then
@@ -662,13 +784,6 @@ Begin
     End
   Else
     tabSyntax.TabVisible := False;
-  // Initialise the Highlighter Attributes.
-  If lbAttributes.Items.Count > 0 Then
-    Begin
-      lbAttributes.ItemIndex := 0;
-      lbAttributesClick(Nil);
-    End;
-  PageControl1.ActivePageIndex := 0;
 End;
 
 (**
