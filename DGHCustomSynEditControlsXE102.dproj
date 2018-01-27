@@ -47,7 +47,7 @@
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base)'!=''">
         <VerInfo_Locale>2057</VerInfo_Locale>
-        <DCC_BplOutput>..\Bpl</DCC_BplOutput>
+        <DCC_BplOutput>\HoylD\RAD Studio\Bpl</DCC_BplOutput>
         <VerInfo_Keys>CompanyName=;FileDescription=$(MSBuildProjectName);FileVersion=1.0.0.0;InternalName=;LegalCopyright=;LegalTrademarks=;OriginalFilename=;ProgramID=com.embarcadero.$(MSBuildProjectName);ProductName=$(MSBuildProjectName);ProductVersion=1.0.0.0;Comments=</VerInfo_Keys>
         <SanitizedProjectName>DGHCustomSynEditControlsXE102</SanitizedProjectName>
         <DCC_Namespace>System;Xml;Data;Datasnap;Web;Soap;Vcl;Vcl.Imaging;Vcl.Touch;Vcl.Samples;Vcl.Shell;$(DCC_Namespace)</DCC_Namespace>
@@ -63,12 +63,12 @@
         <DCC_K>false</DCC_K>
         <DCC_HppOutputARM>true</DCC_HppOutputARM>
         <DCC_UnitSearchPath>D:\HoylD\RAD Studio\Library\SynEdit 2.1.0\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
-        <DCC_DcpOutput>..\Dcp</DCC_DcpOutput>
+        <DCC_DcpOutput>\HoylD\RAD Studio\Dcp</DCC_DcpOutput>
+        <DesignOnlyPackage>true</DesignOnlyPackage>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Base_Win32)'!=''">
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Namespace>Winapi;System.Win;Data.Win;Datasnap.Win;Web.Win;Soap.Win;Xml.Win;Bde;$(DCC_Namespace)</DCC_Namespace>
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <DCC_UsePackage>vcl;rtl;SynEdit_R;$(DCC_UsePackage)</DCC_UsePackage>
         <BT_BuildType>Debug</BT_BuildType>
     </PropertyGroup>
@@ -84,9 +84,9 @@
         <DCC_RemoteDebug>true</DCC_RemoteDebug>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_RemoteDebug>false</DCC_RemoteDebug>
+        <DCC_Description>DGH Custom SynEdit Components 1.0</DCC_Description>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2)'!=''">
         <DCC_LocalDebugSymbols>false</DCC_LocalDebugSymbols>
@@ -95,7 +95,6 @@
         <DCC_DebugInformation>0</DCC_DebugInformation>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
         <VerInfo_Locale>1033</VerInfo_Locale>
         <DCC_Description>DGH Custom SynEdit Controls</DCC_Description>
         <DCC_ShowGeneralMessages>true</DCC_ShowGeneralMessages>
@@ -107,10 +106,24 @@
         <DCCReference Include="DGHCustomSynEditHighlighters.dcr"/>
         <DCCReference Include="rtl.dcp"/>
         <DCCReference Include="vcl.dcp"/>
+        <DCCReference Include="designide.dcp"/>
         <DCCReference Include="SynEdit_R.dcp"/>
         <DCCReference Include="Source\SynHighlighterRegEx.pas"/>
         <DCCReference Include="Source\SynHighlighterBNF.pas"/>
         <DCCReference Include="Source\SynHighlighterMD.pas"/>
+        <DCCReference Include="Source\SynEditConfirmationDlgForm.pas">
+            <Form>frmConfirmationDlg</Form>
+        </DCCReference>
+        <DCCReference Include="Source\SynEditSearchReplaceForm.pas">
+            <Form>frmSearchAndReplace</Form>
+        </DCCReference>
+        <DCCReference Include="Source\DGHCustomSynEditControlsReg.pas"/>
+        <RcCompile Include="DGHCustomSynEditControlsITHVerInfo.RC">
+            <Form>DGHCustomSynEditControlsITHVerInfo.res</Form>
+        </RcCompile>
+        <RcCompile Include="DGHCustomSynEditControlsSplashScreen.rc">
+            <Form>New1.res</Form>
+        </RcCompile>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -159,7 +172,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="C:\Users\Public\Documents\Embarcadero\Studio\18.0\Bpl\DGHCustomSynEditControlsXE102.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\Bpl\DGHCustomSynEditControlsXE102.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DGHCustomSynEditControlsXE102.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

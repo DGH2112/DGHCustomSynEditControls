@@ -1,4 +1,27 @@
 [Setup]
 WarnBefore=0
 WarnAfter=0
+IncBuild=1
+CopyVersionInfoFrom=
+ExcludedResExts=.dcr
+EnabledVersionInfo=1
+IncludeInProject=1
+CompileWithBRCC32=0
+MajorVer=1
+MinorVer=0
+ReleaseVer=0
+BuildVer=103
+ResourceName=DGHCustomSynEditControlsITHVerInfo
+
+[VersionInfo]
+CompanyName=Season's Fall Music
+FileDescription=DGHCustomSynEditControls - A collection of SynEdit custom controls
+FileVersion=1.0.0.103
+InternalName=DGHCustomSynEditControls
+LegalCopyright=Season's Fall Music
+LegalTrademarks=Season's Fall Music
+OriginalFilename=DGHCustomSynEditControls
+ProductName=DGHCustomSynEditControls
+ProductVersion=1.0
+Comments=DGHCustomSynEditControls - A collection of SynEdit custom controls
 

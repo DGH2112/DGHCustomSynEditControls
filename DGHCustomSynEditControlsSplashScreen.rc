@@ -1,0 +1,11 @@
+/*
+
+  A resource file for the splash screen bitmap.
+
+  @Author  David Hoyle
+  @Version 1.0
+  @Date    27 Jan 2018
+
+*/
+SplashScreenBitMap24x24 BITMAP "Images\SplashScreenBitMap24x24.bmp"
+
