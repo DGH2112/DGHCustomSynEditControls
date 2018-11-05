@@ -5,7 +5,7 @@
 
   @Version 1.0
   @Author  David Hoyle
-  @Date    26 Jan 2018
+  @Date    05 Nov 2018
 
   @todo Add Key Commands
 
@@ -173,6 +173,14 @@ Type
     upModifiedBarWidth: TUpDown;
     edtModifiedBarWidth: TEdit;
     lblModifiedBarWidth: TLabel;
+    cbxGutterColour: TColorBox;
+    lblGutterColour: TLabel;
+    cbxGutterBorderColour: TColorBox;
+    lblGutterBorderColour: TLabel;
+    edtGutterWidth: TEdit;
+    udGutterWidth: TUpDown;
+    lblGutterWidth: TLabel;
+    gpnlFontStyles: TGridPanel;
     Procedure lbAttributesClick(Sender: TObject);
     Procedure AttributeChange(Sender: TObject);
   Private
@@ -659,8 +667,11 @@ Begin
   Editor.Gutter.AutoSize := chkAutoSize.Checked;
   Editor.Gutter.ShowModification := chkShowModifications.Checked;
   Editor.Gutter.ShowLineNumbers := chxLineNumbers.Checked;
+  Editor.Gutter.Color := cbxGutterColour.Selected;
+  Editor.Gutter.BorderColor := cbxGutterBorderColour.Selected;
   Editor.Gutter.ModificationColorModified := cbxModifiedColour.Selected;
   Editor.Gutter.ModificationColorSaved := cbxSavedColour.Selected;
+  Editor.Gutter.ModificationBarWidth := upModifiedBarWidth.Position;
 End;
 
 (**
@@ -700,6 +711,16 @@ Begin
     clbOptions.Checked[Integer(i)] := i In Editor.Options;
 End;
 
+(**
+
+  This method method initialises the dialogue controls with the settings from the given Editor.
+
+  @precon  Editor must be a valid instance.
+  @postcon The control a=on the dialogue are set to the properties of the given editor.
+
+  @param   Editor as a TSynEdit as a constant
+
+**)
 Procedure TfrmEditorOptions.InitialiseDlg(Const Editor: TSynEdit);
 
 Begin
@@ -716,6 +737,18 @@ Begin
   PageControl1.ActivePageIndex := 0;
 End;
 
+(**
+
+  This method sets the control on the Editor page of the dialogue to the main properties of the editor
+  control.
+
+  @precon  Editor must be a valid instance.
+  @postcon The Controls on the Editor page of he dialogue are set to the main properties of the given
+           editor.
+
+  @param   Editor as a TSynEdit as a constant
+
+**)
 Procedure TfrmEditorOptions.InitialiseEditor(Const Editor: TSynEdit);
 
 Begin
@@ -738,16 +771,42 @@ Begin
   udMaxScrollWidth.Position := Editor.MaxScrollWidth;
 End;
 
+(**
+
+  This method sets the controls on the gutter page of the dialogue to the properties of the given editor
+  gutter.
+
+  @precon  Editor must be a valid instance.
+  @postcon The controls on the gutter page of the dialogue are set to the properties of the given editor
+           gutter.
+
+  @param   Editor as a TSynEdit as a constant
+
+**)
 Procedure TfrmEditorOptions.InitialiseGutter(Const Editor: TSynEdit);
 
 Begin
   chkAutoSize.Checked := Editor.Gutter.AutoSize;
   chkShowModifications.Checked := Editor.Gutter.ShowModification;
   chxLineNumbers.Checked := Editor.Gutter.ShowLineNumbers;
+  cbxGutterColour.Selected := Editor.Gutter.Color;
+  cbxGutterBorderColour.Selected := Editor.Gutter.BorderColor;
   cbxModifiedColour.Selected := Editor.Gutter.ModificationColorModified;
   cbxSavedColour.Selected := Editor.Gutter.ModificationColorSaved;
+  upModifiedBarWidth.Position := Editor.Gutter.ModificationBarWidth;
 End;
 
+(**
+
+  This method initialises the highlighter controls to the settings of the gievn editors highlighter else
+  the tab is hidden.
+
+  @precon  Editor must be a valid instance.
+  @postcon The syntax tab of the editor is set to the values of the Editors highlighter.
+
+  @param   Editor as a TSynEdit as a constant
+
+**)
 Procedure TfrmEditorOptions.InitialiseHighlighter(Const Editor: TSynEdit);
 
 Const
