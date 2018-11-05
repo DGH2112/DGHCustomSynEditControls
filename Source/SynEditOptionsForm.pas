@@ -15,36 +15,38 @@ Unit SynEditOptionsForm;
 Interface
 
 Uses
-  Windows,
-  Messages,
-  SysUtils,
-  Variants,
-  Classes,
-  Graphics,
-  Controls,
-  Forms,
-  Dialogs,
-  ComCtrls,
-  StdCtrls,
-  ExtCtrls,
-  Buttons,
+  System.Classes,
+  System.SysUtils,
+  System.Variants,
+  System.Contnrs,
+  System.Generics.Collections,
+  VCL.Graphics,
+  VCL.Controls,
+  VCL.Forms,
+  VCL.Dialogs,
+  VCL.ComCtrls,
+  VCL.StdCtrls,
+  VCL.ExtCtrls,
+  VCL.Buttons,
+  VCL.CheckLst,
+  WinApi.Windows,
+  WinAPI.Messages,
   SynEdit,
-  CheckLst,
-  Contnrs,
+  SynEditKeyCmds,
   SynEditHighlighter;
 
 Type
   (** This is a private class to hold information about each highlighter
       attribute. **)
   TAttribute = Class
-  Private
+  Strict Private
     FForeColour : TColor;
     FBackColour : TColor;
     FStyle      : TFontStyles;
     FName       : String;
     FAttribute  : TSynHighlighterAttributes;
     FParent     : TSynCustomHighlighter;
-  Protected
+  Strict Protected
   Public
     Constructor Create(Const Name: String; Const Fore, Back: TColor; Const Style: TFontStyles;
       Const Attr : TSynHighlighterAttributes; Const Parent : TSynCustomHighlighter);
@@ -181,8 +183,11 @@ Type
     udGutterWidth: TUpDown;
     lblGutterWidth: TLabel;
     gpnlFontStyles: TGridPanel;
+    lvKeyStrokes: TListView;
     Procedure lbAttributesClick(Sender: TObject);
     Procedure AttributeChange(Sender: TObject);
+    procedure lbAttributesDrawItem(Sender: TWinControl; Index: Integer; Rect: TRect;
+      State: TOwnerDrawState);
   Private
     { Private declarations }
     FAttributes : TAttributes;
@@ -215,6 +220,10 @@ Uses
   CodeSiteLogging,
   {$ENDIF}
   System.UITypes,
+  System.TypInfo,
+  System.Types,
+  VCL.Menus,
+  VCL.Themes,
   SynHighlighterMulti;
 
 Type
@@ -230,32 +239,32 @@ Const
   BehaviouralOptions : Array[Low(TSynEditorOption)..High(TSynEditorOption)] Of
     TSynEditorOptionsRecord = (
     (Description : '<Alt> key invokes Column Selection Mode'; Value: eoAltSetsColumnMode),
-    (Description : 'Auto Indent'; Value: eoAutoIndent),
-    (Description : 'Auto Size Max Scroll Width'; Value: eoAutoSizeMaxScrollWidth),
-    (Description : 'Disable Scroll Arrows'; Value: eoDisableScrollArrows),
-    (Description : 'Drag and Drop Editing'; Value: eoDragDropEditing),
-    (Description : 'Drag and Drop Files'; Value: eoDropFiles),
-    (Description : 'Enhanced Home Key'; Value: eoEnhanceHomeKey),
-    (Description : 'Enhanced End key'; Value: eoEnhanceEndKey),
-    (Description : 'Group Undo'; Value: eoGroupUndo),
-    (Description : 'Half Page Scroll'; Value: eoHalfPageScroll),
-    (Description : 'Hide and Show Scroll Bars'; Value: eoHideShowScrollbars),
-    (Description : 'Keep Caret X'; Value: eoKeepCaretX),
-    (Description : 'No Caret'; Value: eoNoCaret),
-    (Description : 'No Selection'; Value: eoNoSelection),
-    (Description : 'Right Mouse Moves Cursor'; Value: eoRightMouseMovesCursor),
-    (Description : 'Scroll By One Less'; Value: eoScrollByOneLess),
-    (Description : 'Scroll Hint Follows'; Value: eoScrollHintFollows),
-    (Description : 'Scroll Past End of File'; Value: eoScrollPastEof),
-    (Description : 'Scroll Past End of Line'; Value: eoScrollPastEol),
-    (Description : 'Show Scroll Hints'; Value: eoShowScrollHint),
-    (Description : 'Show Special Characters'; Value: eoShowSpecialChars),
-    (Description : 'Smart Tab Delete'; Value: eoSmartTabDelete),
-    (Description : 'Smart Tabs'; Value: eoSmartTabs),
-    (Description : 'Special Line Default FG'; Value: eoSpecialLineDefaultFg),
-    (Description : 'Tab Indent'; Value: eoTabIndent),
-    (Description : 'Tabs to Spaces'; Value: eoTabsToSpaces),
-    (Description : 'Trim Trailing Spaces'; Value: eoTrimTrailingSpaces)
+    (Description : 'Auto Indent';                             Value: eoAutoIndent),
+    (Description : 'Auto Size Max Scroll Width';              Value: eoAutoSizeMaxScrollWidth),
+    (Description : 'Disable Scroll Arrows';                   Value: eoDisableScrollArrows),
+    (Description : 'Drag and Drop Editing';                   Value: eoDragDropEditing),
+    (Description : 'Drag and Drop Files';                     Value: eoDropFiles),
+    (Description : 'Enhanced Home Key';                       Value: eoEnhanceHomeKey),
+    (Description : 'Enhanced End key';                        Value: eoEnhanceEndKey),
+    (Description : 'Group Undo';                              Value: eoGroupUndo),
+    (Description : 'Half Page Scroll';                        Value: eoHalfPageScroll),
+    (Description : 'Hide and Show Scroll Bars';               Value: eoHideShowScrollbars),
+    (Description : 'Keep Caret X';                            Value: eoKeepCaretX),
+    (Description : 'No Caret';                                Value: eoNoCaret),
+    (Description : 'No Selection';                            Value: eoNoSelection),
+    (Description : 'Right Mouse Moves Cursor';                Value: eoRightMouseMovesCursor),
+    (Description : 'Scroll By One Less';                      Value: eoScrollByOneLess),
+    (Description : 'Scroll Hint Follows';                     Value: eoScrollHintFollows),
+    (Description : 'Scroll Past End of File';                 Value: eoScrollPastEof),
+    (Description : 'Scroll Past End of Line';                 Value: eoScrollPastEol),
+    (Description : 'Show Scroll Hints';                       Value: eoShowScrollHint),
+    (Description : 'Show Special Characters';                 Value: eoShowSpecialChars),
+    (Description : 'Smart Tab Delete';                        Value: eoSmartTabDelete),
+    (Description : 'Smart Tabs';                              Value: eoSmartTabs),
+    (Description : 'Special Line Default FG';                 Value: eoSpecialLineDefaultFg),
+    (Description : 'Tab Indent';                              Value: eoTabIndent),
+    (Description : 'Tabs to Spaces';                          Value: eoTabsToSpaces),
+    (Description : 'Trim Trailing Spaces';                    Value: eoTrimTrailingSpaces)
   );
 
 Var
@@ -728,7 +737,6 @@ Begin
   InitialiseGutter(Editor);
   InitialiseBehaviour(Editor);
   InitialiseHighlighter(Editor);
-  InitialiseHighlighter(Editor);
   If lbAttributes.Items.Count > 0 Then
     Begin
       lbAttributes.ItemIndex := 0;
@@ -880,6 +888,45 @@ Begin
           End;
         End;
     End;
+End;
+
+(**
+
+  This is an on raw item event handler for the attribute list.
+
+  @precon  None.
+  @postcon Draws each attribute in its own coloures and font style.
+
+  @param   Sender as a TWinControl
+  @param   Index  as an Integer
+  @param   Rect   as a TRect
+  @param   State  as a TOwnerDrawState
+
+**)
+Procedure TfrmEditorOptions.lbAttributesDrawItem(Sender: TWinControl; Index: Integer; Rect: TRect;
+  State: TOwnerDrawState);
+
+Var
+  strText : String;
+  R : TRect;
+  A: TAttribute;
+
+Begin
+  lbAttributes.Canvas.FillRect(Rect);
+  strText := lbAttributes.Items[Index];
+  R := Rect;
+  A := lbAttributes.Items.Objects[Index] As TAttribute;
+  If odSelected In State Then
+    lbAttributes.Canvas.Brush.Color := StyleServices.GetSystemColor(clHighlight)
+  Else
+    lbAttributes.Canvas.Brush.Color := StyleServices.GetSystemColor(clWindow);
+  If A.BackColour <> clNone Then
+    lbAttributes.Canvas.Brush.Color := A.BackColour;
+  lbAttributes.Canvas.Font.Color := StyleServices.GetSystemColor(clWindowText);
+  If A.ForeColour <> clNone Then
+    lbAttributes.Canvas.Font.Color := A.ForeColour;
+  lbAttributes.Canvas.Font.Style := A.Style;
+  lbAttributes.Canvas.TextRect(R, strText, [tfLeft]);
 End;
 
 End.
