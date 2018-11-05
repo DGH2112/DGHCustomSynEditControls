@@ -13,11 +13,10 @@ Unit SynEditSearchReplaceForm;
 Interface
 
 Uses
-  WinApi.Windows,
-  Winapi.Messages,
   System.SysUtils,
   System.Variants,
   System.Classes,
+  System.IniFiles,
   VCL.Graphics,
   VCL.Controls,
   VCL.Forms,
@@ -25,6 +24,8 @@ Uses
   VCL.StdCtrls,
   VCL.Buttons,
   VCL.ExtCtrls,
+  WinApi.Windows,
+  Winapi.Messages,
   SynEdit,
   SynEditTypes,
   SynEditMiscClasses;
@@ -65,22 +66,22 @@ Type
     Procedure FormDestroy(Sender: TObject);
     Procedure btnOKClick(Sender: TObject);
   Strict Private
-    FRootKey: String;
+    FINIFile: TMemIniFile;
   Public
-    Constructor CreateDlg(Const AOwner: TComponent; Const strRootKey: String);
+    Constructor CreateDlg(Const AOwner: TComponent; Const INIFile : TMemIniFile);
     Class Function Execute(Const AOwner : TForm; Var strSearch, strReplace: String;
-      Var Options: TSearchOptions; Const strRootKey: String): Boolean;
+      Var Options: TSearchOptions; Const INIFile : TMemIniFile): Boolean;
   End;
 
 Procedure SearchFind(Const AOwner : TForm; Const Editor: TCustomSynEdit;
   Const MsgHandler: TSearchReplaceMsgProc; Var strFind, strReplace: String; Var Options: TSearchOptions;
-  Const RegEng, StdEng: TSynEditSearchCustom; Const strRootKey: String);
+  Const RegEng, StdEng: TSynEditSearchCustom; Const IniFile : TMemIniFile);
 Procedure SearchFindNext(Const Editor: TCustomSynEdit; Const MsgHandler: TSearchReplaceMsgProc;
   Const strFind, strReplace: String; Var Options: TSearchOptions;
   Const RegEng, StdEng: TSynEditSearchCustom);
 Procedure SearchReplace(Const AOwner : TForm; Const Editor: TCustomSynEdit;
   Const MsgHandler: TSearchReplaceMsgProc; Var strFind, strReplace: String; Var Options: TSearchOptions;
-  Const RegEng, StdEng: TSynEditSearchCustom; Const strRootKey: String);
+  Const RegEng, StdEng: TSynEditSearchCustom; Const INIFile : TMemIniFile);
 Procedure SearchReplaceText(Const Editor: TCustomSynEdit; Const ASearch, AReplace: String;
   Const Line, Column: Integer; Var Action: TSynReplaceAction);
 
@@ -88,7 +89,6 @@ Implementation
 
 Uses
   System.UITypes,
-  System.IniFiles,
   System.Math,
   SynEditConfirmationDlgForm;
 
@@ -197,7 +197,7 @@ End;
 **)
 Procedure SearchFind(Const AOwner : TForm; Const Editor: TCustomSynEdit;
   Const MsgHandler: TSearchReplaceMsgProc; Var strFind, strReplace: String; Var Options: TSearchOptions;
-  Const RegEng, StdEng: TSynEditSearchCustom; Const strRootKey: String);
+  Const RegEng, StdEng: TSynEditSearchCustom; Const IniFile : TMemIniFile);
 
 Begin
   Exclude(Options, soReplaceDlg);
@@ -211,7 +211,7 @@ Begin
     Include(Options, soSelected)
   Else
     Exclude(Options, soSelected);
-  If TfrmSearchAndReplace.Execute(AOwner, strFind, strReplace, Options, strRootKey) Then
+  If TfrmSearchAndReplace.Execute(AOwner, strFind, strReplace, Options, IniFile) Then
     If strFind <> '' Then
       DoSearchReplaceText(Editor, MsgHandler, strFind, strReplace, Options, RegEng, StdEng);
 End;
@@ -263,7 +263,7 @@ End;
 **)
 Procedure SearchReplace(Const AOwner : TForm; Const Editor: TCustomSynEdit;
   Const MsgHandler: TSearchReplaceMsgProc; Var strFind, strReplace: String; Var Options: TSearchOptions;
-  Const RegEng, StdEng: TSynEditSearchCustom; Const strRootKey: String);
+  Const RegEng, StdEng: TSynEditSearchCustom; Const INIFile : TMemIniFile);
 
 Begin
   Include(Options, soReplaceDlg);
@@ -277,7 +277,7 @@ Begin
     Include(Options, soSelected)
   Else
     Exclude(Options, soSelected);
-  If TfrmSearchAndReplace.Execute(AOwner, strFind, strReplace, Options, strRootKey) Then
+  If TfrmSearchAndReplace.Execute(AOwner, strFind, strReplace, Options, INIFile) Then
     If strFind <> '' Then
       DoSearchReplaceText(Editor, MsgHandler, strFind, strReplace, Options, RegEng, StdEng);
 End;
@@ -384,11 +384,11 @@ End;
   @param   strRootKey as a String as a constant
 
 **)
-Constructor TfrmSearchAndReplace.CreateDlg(Const AOwner: TComponent; Const strRootKey: String);
+Constructor TfrmSearchAndReplace.CreateDlg(Const AOwner: TComponent; Const INIFile : TMemIniFile);
 
 Begin
   Inherited Create(AOwner);
-  FRootKey := strRootKey;
+  FINIFile := INIFile;
 End;
 
 (**
@@ -408,7 +408,7 @@ End;
 
 **)
 Class Function TfrmSearchAndReplace.Execute(Const AOwner : Tform; Var strSearch, strReplace: String;
-  Var Options: TSearchOptions; Const strRootKey: String): Boolean;
+  Var Options: TSearchOptions; Const INIFile : TMemIniFile): Boolean;
 
   (**
 
@@ -440,7 +440,7 @@ Var
 
 Begin
   Result := False;
-  F := TfrmSearchAndReplace.CreateDlg(AOwner, strRootKey);
+  F := TfrmSearchAndReplace.CreateDlg(AOwner, INIFile);
   Try
     F.cbxSearch.Text                := strSearch;
     F.cbxCaseSensitive.Checked      := soCaseSens In Options;
@@ -498,29 +498,23 @@ Const
 Var
   sl: TStringList;
   i : Integer;
-  iniFile: TMemIniFile;
 
 Begin
-  iniFile := TMemIniFile.Create(FRootKey);
+  sl := TStringList.Create;
   Try
-    sl := TStringList.Create;
-    Try
-      iniFile.ReadSection(strSearchAndReplaceSearchStrings, sl);
-      For i := 0 To Min(sl.Count - 1, iMaximumSearchesToStore) Do
-        If iniFile.ReadString(strSearchAndReplaceSearchStrings, sl[i], '') <> '' Then
-          cbxSearch.Items.Add(iniFile.ReadString(strSearchAndReplaceSearchStrings, sl[i], ''));
-      iniFile.ReadSection(strSearchAndReplaceReplaceStrings, sl);
-      For i := 0 To Min(sl.Count - 1, iMaximumSearchesToStore) Do
-        If iniFile.ReadString(strSearchAndReplaceReplaceStrings, sl[i], '') <> '' Then
-          cbxReplace.Items.Add(iniFile.ReadString(strSearchAndReplaceReplaceStrings,
-              sl[i], ''));
-      Top  := iniFile.ReadInteger(strSearchAndReplace, strTopKey, (Screen.Height - Height) Div 2);
-      Left := iniFile.ReadInteger(strSearchAndReplace, strLeftKey, (Screen.Width - Width) Div 2);
-    Finally
-      sl.Free;
-    End;
+    FINIFile.ReadSection(strSearchAndReplaceSearchStrings, sl);
+    For i := 0 To Min(sl.Count - 1, iMaximumSearchesToStore) Do
+      If FINIFile.ReadString(strSearchAndReplaceSearchStrings, sl[i], '') <> '' Then
+        cbxSearch.Items.Add(FINIFile.ReadString(strSearchAndReplaceSearchStrings, sl[i], ''));
+    FINIFile.ReadSection(strSearchAndReplaceReplaceStrings, sl);
+    For i := 0 To Min(sl.Count - 1, iMaximumSearchesToStore) Do
+      If FINIFile.ReadString(strSearchAndReplaceReplaceStrings, sl[i], '') <> '' Then
+        cbxReplace.Items.Add(FINIFile.ReadString(strSearchAndReplaceReplaceStrings,
+            sl[i], ''));
+    Top  := FINIFile.ReadInteger(strSearchAndReplace, strTopKey, (Screen.Height - Height) Div 2);
+    Left := FINIFile.ReadInteger(strSearchAndReplace, strLeftKey, (Screen.Width - Width) Div 2);
   Finally
-    iniFile.Free;
+    sl.Free;
   End;
 End;
 
@@ -542,27 +536,21 @@ Const
 
 Var
   i: Integer;
-  iniFile: TMemIniFile;
 
 Begin
   If ModalResult In [mrOK, mrAll] Then
     Begin
-      iniFile := TMemIniFile.Create(FRootKey);
-      Try
-        For i := 0 To cbxSearch.Items.Count - 1 Do
-          If cbxSearch.Items[i] <> '' Then
-            iniFile.WriteString(strSearchAndReplaceSearchStrings, Format(strStringSavePattern, [i]),
-              cbxSearch.Items[i]);
-        For i := 0 To cbxReplace.Items.Count - 1 Do
-          If cbxReplace.Items[i] <> '' Then
-            iniFile.WriteString(strSearchAndReplaceReplaceStrings, Format(strStringSavePattern, [i]),
-              cbxReplace.Items[i]);
-        iniFile.WriteInteger(strSearchAndReplace, strTopKey, Top);
-        iniFile.WriteInteger(strSearchAndReplace, strLeftKey, Left);
-        iniFile.UpdateFile;
-      Finally
-        iniFile.Free;
-      End;
+      For i := 0 To cbxSearch.Items.Count - 1 Do
+        If cbxSearch.Items[i] <> '' Then
+          FINIFile.WriteString(strSearchAndReplaceSearchStrings, Format(strStringSavePattern, [i]),
+            cbxSearch.Items[i]);
+      For i := 0 To cbxReplace.Items.Count - 1 Do
+        If cbxReplace.Items[i] <> '' Then
+          FINIFile.WriteString(strSearchAndReplaceReplaceStrings, Format(strStringSavePattern, [i]),
+            cbxReplace.Items[i]);
+      FINIFile.WriteInteger(strSearchAndReplace, strTopKey, Top);
+      FINIFile.WriteInteger(strSearchAndReplace, strLeftKey, Left);
+      FINIFile.UpdateFile;
     End;
 End;
 

@@ -3,17 +3,22 @@ Unit SynHighlighterUtils;
 Interface
 
 Uses
+  System.IniFiles,
   SynEdit,
-  SynEditHighlighter,
-  MyEditor.Interfaces;
+  SynEditHighlighter;
 
-  Function  HighlighterName(Const Highlighter : TSynCustomHighlighter) : String;
-  Procedure LoadFromIniFile(Const INIFileReadWriter : IMEINIFileReadWriter; Const Editor : TSynEdit);
-  procedure LoadHighlighterFromINIFile(Const INIFileReadWriter : IMEINIFileReadWriter;
-    Const Highlighter: TSynCustomHighlighter);
-  Procedure SaveToIniFile(Const INIFileReadWriter : IMEINIFileReadWriter; Const Editor : TSynEdit);
-  Procedure SaveHighlighterToINIFile(Const INIFileReadWriter : IMEINIFileReadWriter;
-    Const Highlighter : TSynCustomHighlighter);
+Type
+  TDGHCustomSynEditFunctions = Record
+  Strict Private
+  Public
+    Class Function  HighlighterName(Const Highlighter : TSynCustomHighlighter) : String; Static;
+    Class Procedure LoadFromIniFile(Const INIFile : TMemIniFile; Const Editor : TSynEdit); Static;
+    Class Procedure LoadHighlighterFromINIFile(Const INIFile : TMemIniFile;
+      Const Highlighter: TSynCustomHighlighter); Static;
+    Class Procedure SaveToIniFile(Const INIFile : TMemIniFile; Const Editor : TSynEdit); Static;
+    Class Procedure SaveHighlighterToINIFile(Const INIFile : TMemIniFile;
+      Const Highlighter : TSynCustomHighlighter);  Static;
+  End;
 
 Implementation
 
@@ -37,7 +42,8 @@ Uses
   @return  a String
 
 **)
-Function HighlighterName(Const Highlighter : TSynCustomHighlighter) : String;
+Class Function TDGHCustomSynEditFunctions.HighlighterName(
+  Const Highlighter : TSynCustomHighlighter) : String;
 
 Var
   iPos : Integer;
@@ -62,11 +68,12 @@ End;
   @precon  None.
   @postcon The editor and the highlighter has its settings loaded for the file type.
 
-  @param   INIFileReadWriter as an IMEINIFileReadWriter as a constant
-  @param   Editor            as a TSynEdit as a constant
+  @param   INIFile as a TMemIniFile as a constant
+  @param   Editor  as a TSynEdit as a constant
 
 **)
-Procedure LoadFromIniFile(Const INIFileReadWriter : IMEINIFileReadWriter; Const Editor : TSynEdit);
+Class Procedure TDGHCustomSynEditFunctions.LoadFromIniFile(Const INIFile : TMemIniFile;
+  Const Editor : TSynEdit);
 
 Var
   strIniSection : String;
@@ -77,46 +84,46 @@ Var
 Begin
   strIniSection := IfThen(Assigned(Editor.Highlighter), HighlighterName(Editor.Highlighter),
     'General');
-  Editor.Color := StringToColor(INIFileReadWriter.ReadString(strIniSection, 'Colour', ColorToString(clWindow)));
-  Editor.ActiveLineColor := StringToColor(INIFileReadWriter.ReadString(strIniSection, 'Active Line Colour',
+  Editor.Color := StringToColor(INIFile.ReadString(strIniSection, 'Colour', ColorToString(clWindow)));
+  Editor.ActiveLineColor := StringToColor(INIFile.ReadString(strIniSection, 'Active Line Colour',
     ColorToString(clSkyBlue)));
-  Editor.Font.Name := INIFileReadWriter.ReadString(strIniSection, 'Font Name', 'Consolas');
-  Editor.Font.Size := INIFileReadWriter.ReadInteger(strIniSection, 'Font Size', 11);
-  Editor.Font.Color := StringToColor(INIFileReadWriter.ReadString(strIniSection, 'Font Colour',
+  Editor.Font.Name := INIFile.ReadString(strIniSection, 'Font Name', 'Consolas');
+  Editor.Font.Size := INIFile.ReadInteger(strIniSection, 'Font Size', 11);
+  Editor.Font.Color := StringToColor(INIFile.ReadString(strIniSection, 'Font Colour',
     ColorToString(clWindowText)));
   For eStyle := fsBold To fsStrikeOut Do
-    If INIFileReadWriter.ReadBool(strIniSection, 'Font.' + GetEnumName(TypeInfo(TFontStyle), Ord(eStyle)),
+    If INIFile.ReadBool(strIniSection, 'Font.' + GetEnumName(TypeInfo(TFontStyle), Ord(eStyle)),
       False) Then
       Editor.Font.Style := Editor.Font.Style +  [eStyle];
-  Editor.WordWrap := INIFileReadWriter.ReadBool(strIniSection, 'Wordwrap', False);
-  Editor.Gutter.ShowLineNumbers := INIFileReadWriter.ReadBool(strIniSection, 'Show Line Numbers', True);
-  Editor.Gutter.ShowModification := INIFileReadWriter.ReadBool(strIniSection, 'ShowModification', True);
-  Editor.Gutter.AutoSize := INIFileReadWriter.ReadBool(strIniSection, 'AutoSize', True);
-  Editor.Gutter.ModificationColorModified := StringToColor(INIFileReadWriter.ReadString(strIniSection,
+  Editor.WordWrap := INIFile.ReadBool(strIniSection, 'Wordwrap', False);
+  Editor.Gutter.ShowLineNumbers := INIFile.ReadBool(strIniSection, 'Show Line Numbers', True);
+  Editor.Gutter.ShowModification := INIFile.ReadBool(strIniSection, 'ShowModification', True);
+  Editor.Gutter.AutoSize := INIFile.ReadBool(strIniSection, 'AutoSize', True);
+  Editor.Gutter.ModificationColorModified := StringToColor(INIFile.ReadString(strIniSection,
     'ModificationColourModified', ColorToString(clRed)));
-  Editor.Gutter.ModificationColorSaved := StringToColor(INIFileReadWriter.ReadString(strIniSection,
+  Editor.Gutter.ModificationColorSaved := StringToColor(INIFile.ReadString(strIniSection,
     'ModificationColourSaved', ColorToString(clGreen)));
-  Editor.Gutter.ModificationBarWidth := INIFileReadWriter.ReadInteger(strIniSection, 'ModificationBarWidth', 4);
+  Editor.Gutter.ModificationBarWidth := INIFile.ReadInteger(strIniSection, 'ModificationBarWidth', 4);
   DefaultOptions := [eoAltSetsColumnMode, eoAutoIndent, eoAutoSizeMaxScrollWidth, eoDragDropEditing,
     eoEnhanceHomeKey, eoEnhanceEndKey, eoGroupUndo, eoScrollHintFollows, eoScrollPastEof,
     eoScrollPastEol, eoShowScrollHint, eoSmartTabs, eoTabIndent, eoTabsToSpaces, eoTrimTrailingSpaces];
   For eOption := Low(TSynEditorOption) To High(TSynEditorOption) Do
-    If INIFileReadWriter.ReadBool(strIniSection, 'Options.' + GetEnumName(TypeInfo(TSynEditorOption),
+    If INIFile.ReadBool(strIniSection, 'Options.' + GetEnumName(TypeInfo(TSynEditorOption),
       Ord(eOption)), eOption In DefaultOptions) Then
       Editor.Options := Editor.Options + [eOption];
-  Editor.RightEdge := INIFileReadWriter.ReadInteger(strIniSection, 'Right Edge', 80);
-  Editor.RightEdgeColor := StringToColor(INIFileReadWriter.ReadString(strIniSection, 'Right Edge Colour',
+  Editor.RightEdge := INIFile.ReadInteger(strIniSection, 'Right Edge', 80);
+  Editor.RightEdgeColor := StringToColor(INIFile.ReadString(strIniSection, 'Right Edge Colour',
     ColorToString(clMaroon)));
-  Editor.SelectedColor.Foreground := StringToColor(INIFileReadWriter.ReadString(strIniSection,
+  Editor.SelectedColor.Foreground := StringToColor(INIFile.ReadString(strIniSection,
     'Selected Foreground', ColorToString(clHighlightText)));
-  Editor.SelectedColor.Background := StringToColor(INIFileReadWriter.ReadString(strIniSection,
+  Editor.SelectedColor.Background := StringToColor(INIFile.ReadString(strIniSection,
     'Selected Background', ColorToString(clHighlight)));
-  Editor.TabWidth := INIFileReadWriter.ReadInteger(strIniSection, 'Tab Width', 2);
-  Editor.WantTabs := INIFileReadWriter.ReadBool(strIniSection, 'WantTabs', true);
-  Editor.MaxScrollWidth := INIFileReadWriter.ReadInteger(strIniSection, 'MaxScrollWidth', 8192);
+  Editor.TabWidth := INIFile.ReadInteger(strIniSection, 'Tab Width', 2);
+  Editor.WantTabs := INIFile.ReadBool(strIniSection, 'WantTabs', true);
+  Editor.MaxScrollWidth := INIFile.ReadInteger(strIniSection, 'MaxScrollWidth', 8192);
   Editor.FontSmoothing := fsmClearType;
   Editor.Gutter.Font.Assign(Editor.Font);
-  LoadHighlighterFromINIFile(INIFileReadWriter, Editor.Highlighter);
+  LoadHighlighterFromINIFile(INIFile, Editor.Highlighter);
 End;
 
 (**
@@ -126,11 +133,11 @@ End;
   @precon  INIFile and Highlighter must be valid instances.
   @postcon Loads the given highlighter information from the given ini file.
 
-  @param   INIFileReadWriter as an IMEINIFileReadWriter as a constant
-  @param   Highlighter       as a TSynCustomHighlighter as a constant
+  @param   INIFile     as a TMemIniFile as a constant
+  @param   Highlighter as a TSynCustomHighlighter as a constant
 
 **)
-procedure LoadHighlighterFromINIFile(Const INIFileReadWriter : IMEINIFileReadWriter;
+Class Procedure TDGHCustomSynEditFunctions.LoadHighlighterFromINIFile(Const INIFile : TMemIniFile;
   Const Highlighter: TSynCustomHighlighter);
 
 Var
@@ -148,32 +155,32 @@ begin
       Begin
         M := Highlighter As TSynMultiSyn;
         If M.DefaultHighlighter.Tag < 0 Then
-          LoadHighlighterFromINIFile(INIFileReadWriter, M.DefaultHighlighter);
+          LoadHighlighterFromINIFile(INIFile, M.DefaultHighlighter);
         For iScheme := 0 To M.Schemes.Count - 1 Do
           Begin
             S := M.Schemes[iScheme] As TScheme;
             A := S.MarkerAttri;
             strKey := HighlighterName(M);
             strName := Format('%s:%s', [S.SchemeName, A.Name]);
-            A.Background := StringToColor(INIFileReadWriter.ReadString(strKey, strName + '.Background',
+            A.Background := StringToColor(INIFile.ReadString(strKey, strName + '.Background',
               ColorToString(A.Background)));
-            A.Foreground := StringToColor(INIFileReadWriter.ReadString(strKey, strName + '.Foreground',
+            A.Foreground := StringToColor(INIFile.ReadString(strKey, strName + '.Foreground',
               ColorToString(A.Foreground)));
-            A.Style := TFontStyles(Byte(INIFileReadWriter.ReadInteger(strKey, strName + '.Style',
+            A.Style := TFontStyles(Byte(INIFile.ReadInteger(strKey, strName + '.Style',
               Byte(A.Style))));
             If Highlighter.Tag < 0 Then
-              LoadHighlighterFromINIFile(INIFileReadWriter, S.Highlighter);
+              LoadHighlighterFromINIFile(INIFile, S.Highlighter);
           End;
       End Else
         For iAttr := 0 To Highlighter.AttrCount - 1 Do
           Begin
             A := Highlighter.Attribute[iAttr];
             strKey := HighlighterName(Highlighter);
-            A.Background := StringToColor(INIFileReadWriter.ReadString(strKey, A.Name + '.Background',
+            A.Background := StringToColor(INIFile.ReadString(strKey, A.Name + '.Background',
               ColorToString(A.Background)));
-            A.Foreground := StringToColor(INIFileReadWriter.ReadString(strKey, A.Name + '.Foreground',
+            A.Foreground := StringToColor(INIFile.ReadString(strKey, A.Name + '.Foreground',
               ColorToString(A.Foreground)));
-            A.Style := TFontStyles(Byte(INIFileReadWriter.ReadInteger(strKey, A.Name + '.Style',
+            A.Style := TFontStyles(Byte(INIFile.ReadInteger(strKey, A.Name + '.Style',
               Byte(A.Style))));
           End;
     Highlighter.Tag := 0;
@@ -187,11 +194,12 @@ end;
   @precon  None.
   @postcon The editor and the highlighter has its settings saved for the file type.
 
-  @param   INIFileReadWriter as an IMEINIFileReadWriter as a constant
-  @param   Editor            as a TSynEdit as a constant
+  @param   INIFile as a TMemIniFile as a constant
+  @param   Editor  as a TSynEdit as a constant
 
 **)
-Procedure SaveToIniFile(Const INIFileReadWriter : IMEINIFileReadWriter; Const Editor : TSynEdit);
+Class Procedure TDGHCustomSynEditFunctions.SaveToIniFile(Const INIFile : TMemIniFile;
+  Const Editor : TSynEdit);
 
 Var
   strIniSection : String;
@@ -201,37 +209,37 @@ Var
 Begin
   strIniSection := IfThen(Assigned(Editor.Highlighter), HighlighterName(Editor.Highlighter), 
     'General');
-  INIFileReadWriter.WriteString(strIniSection, 'Colour', ColorToString(Editor.Color));
-  INIFileReadWriter.WriteString(strIniSection, 'Active Line Colour', ColorToString(Editor.ActiveLineColor));
-  INIFileReadWriter.WriteString(strIniSection, 'Font Name', Editor.Font.Name);
-  INIFileReadWriter.WriteInteger(strIniSection, 'Font Size', Editor.Font.Size);
-  INIFileReadWriter.WriteString(strIniSection, 'Font Colour', ColorToString(Editor.Font.Color));
+  INIFile.WriteString(strIniSection, 'Colour', ColorToString(Editor.Color));
+  INIFile.WriteString(strIniSection, 'Active Line Colour', ColorToString(Editor.ActiveLineColor));
+  INIFile.WriteString(strIniSection, 'Font Name', Editor.Font.Name);
+  INIFile.WriteInteger(strIniSection, 'Font Size', Editor.Font.Size);
+  INIFile.WriteString(strIniSection, 'Font Colour', ColorToString(Editor.Font.Color));
   For eStyle := fsBold To fsStrikeOut Do
-    INIFileReadWriter.WriteBool(strIniSection, 'Font.' + GetEnumName(TypeInfo(TFontStyle), Ord(eStyle)),
+    INIFile.WriteBool(strIniSection, 'Font.' + GetEnumName(TypeInfo(TFontStyle), Ord(eStyle)),
       eStyle In Editor.Font.Style);
-  INIFileReadWriter.WriteBool(strIniSection, 'Wordwrap', Editor.WordWrap);
-  INIFileReadWriter.WriteBool(strIniSection, 'Show Line Numbers', Editor.Gutter.ShowLineNumbers);
-  INIFileReadWriter.WriteBool(strIniSection, 'ShowModification', Editor.Gutter.ShowModification);
-  INIFileReadWriter.WriteBool(strIniSection, 'AutoSize', Editor.Gutter.AutoSize);
-  INIFileReadWriter.WriteString(strIniSection, 'ModificationColourModified',
+  INIFile.WriteBool(strIniSection, 'Wordwrap', Editor.WordWrap);
+  INIFile.WriteBool(strIniSection, 'Show Line Numbers', Editor.Gutter.ShowLineNumbers);
+  INIFile.WriteBool(strIniSection, 'ShowModification', Editor.Gutter.ShowModification);
+  INIFile.WriteBool(strIniSection, 'AutoSize', Editor.Gutter.AutoSize);
+  INIFile.WriteString(strIniSection, 'ModificationColourModified',
     ColorToString(Editor.Gutter.ModificationColorModified));
-  INIFileReadWriter.WriteString(strIniSection, 'ModificationColourSaved',
+  INIFile.WriteString(strIniSection, 'ModificationColourSaved',
     ColorToString(Editor.Gutter.ModificationColorSaved));
-  INIFileReadWriter.WriteInteger(strIniSection, 'ModificationBarWidth', Editor.Gutter.ModificationBarWidth);
+  INIFile.WriteInteger(strIniSection, 'ModificationBarWidth', Editor.Gutter.ModificationBarWidth);
   For eOption := Low(TSynEditorOption) To High(TSynEditorOption) Do 
-    INIFileReadWriter.WriteBool(strIniSection, 'Options.' + GetEnumName(TypeInfo(TSynEditorOption),
+    INIFile.WriteBool(strIniSection, 'Options.' + GetEnumName(TypeInfo(TSynEditorOption),
       Ord(eOption)), eOption In Editor.Options);
-  INIFileReadWriter.WriteInteger(strIniSection, 'Right Edge', Editor.RightEdge);
-  INIFileReadWriter.WriteString(strIniSection, 'Right Edge Colour', ColorToString(Editor.RightEdgeColor));
-  INIFileReadWriter.WriteString(strIniSection, 'Selected Foreground',
+  INIFile.WriteInteger(strIniSection, 'Right Edge', Editor.RightEdge);
+  INIFile.WriteString(strIniSection, 'Right Edge Colour', ColorToString(Editor.RightEdgeColor));
+  INIFile.WriteString(strIniSection, 'Selected Foreground',
     ColorToString(Editor.SelectedColor.Foreground));
-  INIFileReadWriter.WriteString(strIniSection, 'Selected Background',
+  INIFile.WriteString(strIniSection, 'Selected Background',
     ColorToString(Editor.SelectedColor.Background));
-  INIFileReadWriter.WriteInteger(strIniSection, 'Tab Width', Editor.TabWidth);
-  INIFileReadWriter.WriteBool(strIniSection, 'WantTabs', Editor.WantTabs);
-  INIFileReadWriter.WriteInteger(strIniSection, 'MaxScrollWidth', Editor.MaxScrollWidth);
-  SaveHighlighterToINIFile(INIFileReadWriter, Editor.Highlighter);
-  INIFileReadWriter.Save();
+  INIFile.WriteInteger(strIniSection, 'Tab Width', Editor.TabWidth);
+  INIFile.WriteBool(strIniSection, 'WantTabs', Editor.WantTabs);
+  INIFile.WriteInteger(strIniSection, 'MaxScrollWidth', Editor.MaxScrollWidth);
+  SaveHighlighterToINIFile(INIFile, Editor.Highlighter);
+  INIFile.UpdateFile();
 End;
 
 (**
@@ -241,11 +249,11 @@ End;
   @precon  INIFile and Highlighter must be valid instances.
   @postcon Saves the given highlighter to the given ini file.
 
-  @param   INIFileReadWriter as an IMEINIFileReadWriter as a constant
-  @param   Highlighter       as a TSynCustomHighlighter as a constant
+  @param   INIFile     as a TMemIniFile as a constant
+  @param   Highlighter as a TSynCustomHighlighter as a constant
 
 **)
-Procedure SaveHighlighterToINIFile(Const INIFileReadWriter : IMEINIFileReadWriter;
+Class Procedure TDGHCustomSynEditFunctions.SaveHighlighterToINIFile(Const INIFile : TMemIniFile;
   Const Highlighter : TSynCustomHighlighter);
 
 Var
@@ -269,21 +277,21 @@ begin
               A := S.MarkerAttri;
               strKey := HighlighterName(M);
               strName := Format('%s:%s', [S.SchemeName, A.Name]);
-              INIFileReadWriter.WriteString(strKey, strName + '.Background', ColorToString(A.Background));
-              INIFileReadWriter.WriteString(strKey, strName + '.Foreground', ColorToString(A.Foreground));
-              INIFileReadWriter.WriteInteger(strKey, strName + '.Style', Byte(A.Style));
+              INIFile.WriteString(strKey, strName + '.Background', ColorToString(A.Background));
+              INIFile.WriteString(strKey, strName + '.Foreground', ColorToString(A.Foreground));
+              INIFile.WriteInteger(strKey, strName + '.Style', Byte(A.Style));
             End;
         End Else
         For iAttr := 0 To Highlighter.AttrCount - 1 Do
           Begin
             A := Highlighter.Attribute[iAttr];
             strKey := HighlighterName(Highlighter);
-            INIFileReadWriter.WriteString(strKey, A.Name + '.Background', ColorToString(A.Background));
-            INIFileReadWriter.WriteString(strKey, A.Name + '.Foreground', ColorToString(A.Foreground));
-            INIFileReadWriter.WriteInteger(strKey, A.Name + '.Style', Byte(A.Style));
+            INIFile.WriteString(strKey, A.Name + '.Background', ColorToString(A.Background));
+            INIFile.WriteString(strKey, A.Name + '.Foreground', ColorToString(A.Foreground));
+            INIFile.WriteInteger(strKey, A.Name + '.Style', Byte(A.Style));
           End;
-      INIFileReadWriter.Save;
+      INIFile.UpdateFile;
     End;
-end;
+End;
 
 End.
