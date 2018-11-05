@@ -5,7 +5,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    28 Jan 2018
+  @Date    01 Feb 2018
 
 **)
 Unit SynHighlighterMD;
@@ -34,29 +34,30 @@ Type
   (** An enumerate to define the types of token that can be highlighted. **)
   TMDTokenKind = (
     tkMDLineComment,
-    //: @todo Heading underlined with ======
-    //: @todo ## Subheading
+    tkMDSubheading,
     tkMDItalic,
     tkMDBold,
     tkMDMonospace,
-    //: @todo Horizontal rule: ---
-    //: @todo Bullet:    * apples
-    //: @todo Number:    1 wash
+    tkMDBullet,
+    tkMDNumber,
     //: @todo [link](http://example.com)
     //: @todo [Image](Image_icon.png)
     //: @todo In-line HTML support
-    tkSpace,
-    tkSymbol,
-    tkText
+    tkMDSpace,
+    tkMDSymbol,
+    tkMDText
   );
 
   (** An enumerate to define the token ranges in the text. **)
   TMDRangeState = (
     rsMDLineComment,
+    rsMDSubHeading,
     rsMDItalic,
     rsMDBold,
     rsMDMonospace,
-    rsText
+    rsMDBullet,
+    rsMDNumber,
+    rsMDText
   );
 
   (** A pointer to a function table procedure. **)
@@ -80,12 +81,13 @@ Type
     Procedure SpaceProc;
     Procedure CRProc;
     Procedure LFProc;
-    Procedure MDCommentOpenProc;
-    Procedure MDLineCommentProc;
+    Procedure MDCommentSubHeadingOpenProc;
+    Procedure MDGenericLineProc(Const eTokenID : TMDTokenKind);
     Procedure MDItalicOpenProc;
     Procedure MDItalicProc;
-    Procedure MDBoldOpenProc;
+    Procedure MDBoldBulletOpenProc;
     Procedure MDBoldProc;
+    Procedure MDNumberOpenProc;
     Procedure MDMonospaceOpenProc;
     Procedure MDMonospaceProc;
     Procedure SymbolProc;
@@ -96,6 +98,7 @@ Type
       BackColour: TColor; Const FontStyle: TFontStyles);
     Function  GetAttri(Const eTokenKind: TMDTokenKind): TSynHighlighterAttributes;
     Procedure SetAttri(Const eTokenKind: TMDTokenKind; Const Attri: TSynHighlighterAttributes);
+    Function  IsFirstCharOnLine(Const iIndex : Integer) : Boolean;
   Public
     Constructor Create(AOwner: TComponent); Override;
     Destructor Destroy; Override;
@@ -118,37 +121,70 @@ Type
       @postcon Gets and sets the MD Comment character attributes.
       @return  a TSynHighlighterAttributes
     **)
-    Property MDCommentAttri: TSynHighlighterAttributes Index tkMDLineComment Read GetAttri Write SetAttri;
+    Property Comment: TSynHighlighterAttributes Index tkMDLineComment Read GetAttri Write SetAttri;
     (**
-      A property to hold the MD Italic character attributes.
+      A property to hold the Subheading character attributes.
       @precon  None.
-      @postcon Gets and sets the MD Italic character attributes.
+      @postcon Gets and sets the Subheading character attributes.
       @return  a TSynHighlighterAttributes
     **)
-    Property MDItalic : TSynHighlighterAttributes Index tkMDItalic Read GetAttri Write SetAttri;
-    Property MDBold : TSynHighlighterAttributes Index tkMDBold Read GetAttri Write SetAttri;
-    Property MDMonospace : TSynHighlighterAttributes Index tkMDMonospace Read GetAttri Write SetAttri;
+    Property SubHeading: TSynHighlighterAttributes Index tkMDSubheading Read GetAttri Write SetAttri;
+    (**
+      A property to hold the Italic character attributes.
+      @precon  None.
+      @postcon Gets and sets the Italic character attributes.
+      @return  a TSynHighlighterAttributes
+    **)
+    Property Italic : TSynHighlighterAttributes Index tkMDItalic Read GetAttri Write SetAttri;
+    (**
+      A property to hold the Bold character attributes.
+      @precon  None.
+      @postcon Gets and sets the Bold character attributes.
+      @return  a TSynHighlighterAttributes
+    **)
+    Property Bold : TSynHighlighterAttributes Index tkMDBold Read GetAttri Write SetAttri;
+    (**
+      A property to hold the Monospace character attributes.
+      @precon  None.
+      @postcon Gets and sets the Monospace character attributes.
+      @return  a TSynHighlighterAttributes
+    **)
+    Property Monospace : TSynHighlighterAttributes Index tkMDMonospace Read GetAttri Write SetAttri;
+    (**
+      A property to hold the Bullet character attributes.
+      @precon  None.
+      @postcon Gets and sets the Bullet character attributes.
+      @return  a TSynHighlighterAttributes
+    **)
+    Property Bullet : TSynHighlighterAttributes Index tkMDBullet Read GetAttri Write SetAttri;
+    (**
+      A property to hold the Number character attributes.
+      @precon  None.
+      @postcon Gets and sets the Number character attributes.
+      @return  a TSynHighlighterAttributes
+    **)
+    Property Number : TSynHighlighterAttributes Index tkMDNumber Read GetAttri Write SetAttri;
     (**
       A property to hold the space character attributes.
       @precon  None.
       @postcon Gets and sets the space character attributes.
       @return  a TSynHighlighterAttributes
     **)
-    Property SpaceAttri: TSynHighlighterAttributes Index tkSpace Read GetAttri Write SetAttri;
+    Property Space: TSynHighlighterAttributes Index tkMDSpace Read GetAttri Write SetAttri;
     (**
       A property to hold the symbol character attributes.
       @precon  None.
       @postcon Gets and sets the symbol character attributes.
       @return  a TSynHighlighterAttributes
     **)
-    Property RegExSymbols: TSynHighlighterAttributes Index tkSymbol Read GetAttri Write SetAttri;
+    Property Symbols: TSynHighlighterAttributes Index tkMDSymbol Read GetAttri Write SetAttri;
     (**
       A property to hold the text character attributes.
       @precon  None.
       @postcon Gets and sets the text character attributes.
       @return  a TSynHighlighterAttributes
     **)
-    Property Text: TSynHighlighterAttributes Index tkText Read GetAttri Write SetAttri;
+    Property Text: TSynHighlighterAttributes Index tkMDText Read GetAttri Write SetAttri;
   End;
 
 Implementation
@@ -166,12 +202,20 @@ Resourcestring
   SYNS_FilterMarkdown = 'Markdown Files (*.regex)|*.regex';
   (** A resource string for the language name. **)
   SYNS_LangMarkdown = 'Markdown';
-  (** A resource string for the MD Comment attribute name. **)
-  SYNS_AttrMDComment = 'Markdown Comment';
-  (** A resource string for the MD italic attribute name. **)
-  SYNS_AttrItalic = 'Italic Text';
-  SYNS_AttrBold = 'Bold Text';
-  SYNS_AttrMonospace = 'Monospace Text';
+  (** A resource string for the Comment attribute name. **)
+  SYNS_AttrComment = 'Comment';
+  (** A resource string for the SubHeading attribute name. **)
+  SYNS_AttrSubheading = 'Subheading';
+  (** A resource string for the Italic attribute name. **)
+  SYNS_AttrItalic = 'Italic';
+  (** A resource string for the Bold attribute name. **)
+  SYNS_AttrBold = 'Bold';
+  (** A resource string for the Monospac attribute name. **)
+  SYNS_AttrMonospace = 'Monospace';
+  (** A resource string for the Bullet attribute name. **)
+  SYNS_AttrBullet = 'Bullet';
+  (** A resource string for the Number attribute name. **)
+  SYNS_AttrNumber = 'Number';
   (** A resource string for the MD text attribute name. **)
   SYNS_AttrText = 'Text';
 
@@ -189,7 +233,6 @@ Const
 
 {$Q-}
 
-{$REGION IGNORE}
 (**
 
   This method sets the given attribute with the given colours and font style.
@@ -229,9 +272,8 @@ End;
 Function TSynMDSyn.AltFunc(Const Index: Integer): TMDTokenKind;
 
 Begin
-  Result := tkText;
+  Result := tkMDText;
 End;
-{$ENDREGION}
 
 (**
 
@@ -250,24 +292,30 @@ Constructor TSynMDSyn.Create(AOwner: TComponent);
 Begin
   Inherited Create(AOwner);
   fCaseSensitive := False;
-  FTokenAttri[tkMDLineComment] := TSynHighlighterAttributes.Create(SYNS_AttrMDComment, SYNS_AttrMDComment);
+  FTokenAttri[tkMDLineComment] := TSynHighlighterAttributes.Create(SYNS_AttrComment, SYNS_AttrComment);
   AddAndUpdateAttributes(FTokenAttri[tkMDLineComment], clPurple, clNone, [fsItalic]);
+  FTokenAttri[tkMDSubHeading] := TSynHighlighterAttributes.Create(SYNS_AttrSubheading, SYNS_AttrSubheading);
+  AddAndUpdateAttributes(FTokenAttri[tkMDSubHeading], clNone, clNone, [fsBold, fsUnderline]);
   FTokenAttri[tkMDItalic] := TSynHighlighterAttributes.Create(SYNS_AttrItalic, SYNS_AttrItalic);
   AddAndUpdateAttributes(FTokenAttri[tkMDItalic], clNone, clNone, [fsItalic]);
   FTokenAttri[tkMDBold] := TSynHighlighterAttributes.Create(SYNS_AttrBold, SYNS_AttrBold);
   AddAndUpdateAttributes(FTokenAttri[tkMDBold], clNone, clNone, [fsBold]);
   FTokenAttri[tkMDMonospace] := TSynHighlighterAttributes.Create(SYNS_AttrMonospace, SYNS_AttrMonospace);
   AddAndUpdateAttributes(FTokenAttri[tkMDMonospace], clNone, clNone, []);
-  FTokenAttri[tkSymbol] := TSynHighlighterAttributes.Create(SYNS_AttrSymbol, SYNS_FriendlyAttrSymbol);
-  AddAndUpdateAttributes(FTokenAttri[tkSymbol], clMaroon, clNone, []);
-  FTokenAttri[tkText] := TSynHighlighterAttributes.Create(SYNS_AttrText, SYNS_AttrText);
-  AddAndUpdateAttributes(FTokenAttri[tkText], clNone, clNone, []);
-  FTokenAttri[tkSpace] := TSynHighlighterAttributes.Create(SYNS_AttrSpace, SYNS_FriendlyAttrSpace);
-  AddAndUpdateAttributes(FTokenAttri[tkSpace], clNone, clNone, []);
+  FTokenAttri[tkMDBullet] := TSynHighlighterAttributes.Create(SYNS_AttrBullet, SYNS_AttrBullet);
+  AddAndUpdateAttributes(FTokenAttri[tkMDBullet], clNone, clNone, []);
+  FTokenAttri[tkMDNumber] := TSynHighlighterAttributes.Create(SYNS_AttrNumber, SYNS_AttrNumber);
+  AddAndUpdateAttributes(FTokenAttri[tkMDNumber], clNone, clNone, []);
+  FTokenAttri[tkMDSymbol] := TSynHighlighterAttributes.Create(SYNS_AttrSymbol, SYNS_FriendlyAttrSymbol);
+  AddAndUpdateAttributes(FTokenAttri[tkMDSymbol], clMaroon, clNone, []);
+  FTokenAttri[tkMDText] := TSynHighlighterAttributes.Create(SYNS_AttrText, SYNS_AttrText);
+  AddAndUpdateAttributes(FTokenAttri[tkMDText], clNone, clNone, []);
+  FTokenAttri[tkMDSpace] := TSynHighlighterAttributes.Create(SYNS_AttrSpace, SYNS_FriendlyAttrSpace);
+  AddAndUpdateAttributes(FTokenAttri[tkMDSpace], clNone, clNone, []);
   SetAttributesOnChange(DefHighlightChange);
   InitIdent;
   fDefaultFilter := SYNS_FilterMarkdown;
-  FRange := rsText;
+  FRange := rsMDText;
 End;
 
 (**
@@ -283,15 +331,14 @@ Procedure TSynMDSyn.CRProc;
 Begin
   If Not (FRange In [rsMDItalic, rsMDBold, rsMDMonospace]) Then
     Begin
-      FTokenID := tkSpace;
-      FRange := rsText;
+      FTokenID := tkMDSpace;
+      FRange := rsMDText;
     End;
   Inc(Run);
   If FLine[Run] = #10 Then
     Inc(Run);
 End;
 
-{$REGION IGNORE}
 (**
 
   A destructor for the TSynMDSyn class.
@@ -306,10 +353,23 @@ Begin
   Inherited Destroy;
 End;
 
+(**
+
+  Not sure but is required by the highlighter...
+
+  @precon  None.
+  @postcon Returns the text enumerate as a default.
+
+  @nohint  Index
+  
+  @param   Index as an Integer as a constant
+  @return  a TMDTokenKind
+
+**)
 Function TSynMDSyn.FuncKeyword(Const Index: Integer): TMDTokenKind;
 
 Begin
-  Result := tkText;
+  Result := tkMDText;
 End;
 
 (**
@@ -347,7 +407,7 @@ Function TSynMDSyn.GetDefaultAttribute(Index: Integer): TSynHighlighterAttribute
 Begin
   Case Index Of
     SYN_ATTR_COMMENT: Result := FTokenAttri[tkMDLineComment];
-    SYN_ATTR_WHITESPACE: Result := FTokenAttri[tkSpace];
+    SYN_ATTR_WHITESPACE: Result := FTokenAttri[tkMDSpace];
   Else
     Result := Nil;
   End;
@@ -430,15 +490,49 @@ End;
 Function TSynMDSyn.GetSampleSource: String;
 
 ResourceString
-  //: @todo Update with some meaningful text example.
   strSampleSource =
-    'Sample source for: '#13#10 +
-    'MD Syntax Parser/Highlighter';
+    '#'#13#10 +
+    '# This is a comment header for the Markdown file'#13#10 +
+    '#'#13#10 +
+    ''#13#10 +
+    'Heading'#13#10 +
+    '======='#13#10 +
+    ''#13#10 +
+    '## Sub-heading'#13#10 +
+    ''#13#10 +
+    'Paragraphs are separated by a blank line.'#13#10 +
+    ''#13#10 +
+    'Two spaces at the end of a line leave a line break.'#13#10 +
+    ''#13#10 +
+    'Text attributes _italic_, **bold**, `monospace`.'#13#10 +
+    ''#13#10 +
+    'Horizontal rule:'#13#10 +
+    ''#13#10 +
+    '---'#13#10 +
+    ''#13#10 +
+    'Bullet list:'#13#10 +
+    ''#13#10 +
+    '  * apples'#13#10 +
+    '  * oranges'#13#10 +
+    '  * pears'#13#10 +
+    ''#13#10 +
+    'Numbered list:'#13#10 +
+    ''#13#10 +
+    '  1. wash'#13#10 +
+    '  2. rinse'#13#10 +
+    '  3. repeat'#13#10 +
+    ''#13#10 +
+    'A [link](http://example.com).'#13#10 +
+    ''#13#10 +
+    '![Image](Image_icon.png)'#13#10 +
+    ''#13#10 +
+    '> Markdown uses email-style > characters for blockquoting.'#13#10 +
+    ''#13#10 +
+    'Inline <abbr title="Hypertext Markup Language">HTML</abbr> is supported.';
 
 Begin
   Result := strSampleSource;
 End;
-{$ENDREGION}
 
 (**
 
@@ -453,19 +547,9 @@ End;
 Function TSynMDSyn.GetTokenAttribute: TSynHighlighterAttributes;
 
 Begin
-  Case GetTokenID Of
-    tkMDLineComment: Result := FTokenAttri[tkMDLineComment];
-    tkMDItalic:      Result := FTokenAttri[tkMDItalic];
-    tkMDBold:        Result := FTokenAttri[tkMDBold];
-    tkMDMonospace:   Result := FTokenAttri[tkMDMonospace];
-    tkSymbol:        Result := FTokenAttri[tkSymbol];
-    tkSpace:         Result := FTokenAttri[tkSpace];
-  Else
-    Result := FTokenAttri[tkText];
-  End;
+  Result := FTokenAttri[GetTokenID];
 End;
 
-{$REGION IGNORE}
 (**
 
   This is a getter method for the TokenID property.
@@ -536,6 +620,33 @@ End;
 
 (**
 
+  This method checks that there are only spaces or tabs before the gievn character index on the current
+  line.
+
+  @precon  None.
+  @postcon Returns 
+
+  @param   iIndex as an Integer as a constant
+  @return  a Boolean
+
+**)
+Function TSynMDSyn.IsFirstCharOnLine(Const iIndex: Integer): Boolean;
+
+Var
+  iChar : Integer;
+  
+Begin
+  Result := True;
+  For iChar := Pred(iIndex) DownTo 1 Do
+    If Not CharInSet(FLine[iChar], [#32, #9]) Then
+      Begin
+        Result := False;
+        Break;
+      End;
+End;
+
+(**
+
   This method returns true if the given character is an identifier character.
 
   @precon  None.
@@ -557,20 +668,37 @@ Begin
     Result := False;
   End;
 End;
-{$ENDREGION}
 
+(**
+
+  This method processes a Line Feed character and sets the TokenID and Range if not within amy other
+  ranges.
+
+  @precon  None.
+  @postcon the Line Feed is processed and the TokenID and Range set if appropriate.
+
+**)
 Procedure TSynMDSyn.LFProc;
 
 Begin
   If Not (FRange In [rsMDItalic, rsMDBold, rsMDMonospace]) Then
     Begin
-      FTokenID := tkSpace;
-      FRange := rsText;
+      FTokenID := tkMDSpace;
+      FRange := rsMDText;
     End;
   Inc(Run);
 End;
 
-Procedure TSynMDSyn.MDBoldOpenProc;
+(**
+
+  This method checks to see if the asterik character that triggered this call is followed by another and
+  therefore we are string a BOLD section or is just a symbol.
+
+  @precon  None.
+  @postcon Starts a bold section of there are more than one asterik.
+
+**)
+Procedure TSynMDSyn.MDBoldBulletOpenProc;
 
 Begin
   Inc(Run);
@@ -580,14 +708,27 @@ Begin
       fRange := rsMDBold;
       fTokenID := tkMDBold;
     End Else
-      fTokenID := tkSymbol;
+  If IsFirstCharOnLine(Pred(Run)) Then
+    Begin
+      fTokenID := tkMDBullet;
+      FRange := rsMDBullet;
+    End Else
+      FTokenID := tkMDSymbol;
 End;
 
+(**
+
+  This method process the BOLD chacratcer sequence until it finds an ending doube asterik.
+
+  @precon  None.
+  @postcon Process the BOLD charcater sequence until completion.
+
+**)
 Procedure TSynMDSyn.MDBoldProc;
 
 Begin
   Case FLine[Run] Of
-    #0: NullProc;
+    #0:  NullProc;
     #10: LFProc;
     #13: CRProc;
   Else
@@ -597,7 +738,7 @@ Begin
         If (FLine[Run] = '*') And (FLine[Run - 1] = '*') Then
           Begin
             inc(Run);
-            fRange := rsText;
+            fRange := rsMDText;
             Break;
           End;
         If Not IsLineEnd(Run) Then
@@ -607,12 +748,45 @@ Begin
   End;
 End;
 
-Procedure TSynMDSyn.MDCommentOpenProc;
+(**
+
+  This method checks to see if the sequence of characters is a comment or a sub-heading.
+
+  @precon  None.
+  @postcon A comment of subheading is started.
+
+**)
+Procedure TSynMDSyn.MDCommentSubHeadingOpenProc;
 
 Begin
   Inc(Run);
-  FRange := rsMDLineComment;
-  FTokenID := tkMDLineComment;
+  If FLine[Run] = '#' Then
+    Begin
+      FRange := rsMDSubHeading;
+      FTokenID := tkMDSubheading;
+    End Else
+    Begin
+      FRange := rsMDLineComment;
+      FTokenID := tkMDLineComment;
+    End;
+End;
+
+Procedure TSynMDSyn.MDGenericLineProc(Const eTokenID : TMDTokenKind);
+
+Begin
+  Case FLine[Run] Of
+    #0: NullProc;
+    #10: LFProc;
+    #13: CRProc;
+  Else
+    Begin
+      FTokenID := eTokenID;
+      Repeat
+        If Not IsLineEnd(Run) Then
+          Inc(Run);
+      Until IsLineEnd(Run);
+    End;
+  End;
 End;
 
 Procedure TSynMDSyn.MDItalicOpenProc;
@@ -639,26 +813,8 @@ Begin
       If FLine[Run] = '_' Then
         Begin
           Inc(Run);
-          FRange := rsText;
+          FRange := rsMDText;
         End;
-    End;
-  End;
-End;
-
-Procedure TSynMDSyn.MDLineCommentProc;
-
-Begin
-  Case FLine[Run] Of
-    #0: NullProc;
-    #10: LFProc;
-    #13: CRProc;
-  Else
-    Begin
-      FTokenID := tkMDLineComment;
-      Repeat
-        If Not IsLineEnd(Run) Then
-          Inc(Run);
-      Until IsLineEnd(Run);
     End;
   End;
 End;
@@ -687,29 +843,54 @@ Begin
       If FLine[Run] = '`' Then
         Begin
           Inc(Run);
-          FRange := rsText;
+          FRange := rsMDText;
         End;
     End;
   End;
 End;
 
+Procedure TSynMDSyn.MDNumberOpenProc;
+
+Begin
+  Inc(Run);
+  If IsFirstCharOnLine(Pred(Run)) Then
+    Begin
+      FTokenID := tkMDNumber;
+      FRange := rsMDNumber;
+    End Else
+      FTokenID := tkMDText;
+End;
+
+(**
+
+  This method is called to process a character in the editor text and mark it as a specific type of
+  text.
+
+  @precon  None.
+  @postcon The current character in the editor is attributed a character attribute.
+
+**)
 Procedure TSynMDSyn.Next;
 
 Begin
   fTokenPos := Run;
   Case FRange Of
-    rsMDLineComment: MDLineCommentProc;
+    rsMDLineComment: MDGenericLineProc(tkMDLineComment);
+    rsMDSubHeading:  MDGenericLineProc(tkMDSubheading);
     rsMDItalic:      MDItalicProc;
     rsMDBold:        MDBoldProc;
     rsMDMonospace :  MDMonospaceProc;
+    rsMDBullet:      MDGenericLineProc(tkMDBullet);
+    rsMDNumber:      MDGenericLineProc(tkMDNumber);
   Else
     Case FLine[Run] Of
       #00: NullProc;
       #10: LFProc;
       #13: CRProc;
-      '#': MDCommentOpenProc;
+      '#': MDCommentSubHeadingOpenProc;
       '_': MDItalicOpenProc;
-      '*': MDBoldOpenProc;
+      '*': MDBoldBulletOpenProc;
+      '0'..'9': MDNumberOpenProc;
       '`': MDMonospaceOpenProc;
       #1 .. #9, #11, #12, #14..#32: SpaceProc;
     Else
@@ -722,18 +903,25 @@ Begin
   Inherited;
 End;
 
+(**
+
+  This method processes a null character.
+
+  @precon  None.
+  @postcon Reset the token ID and Range to text if not in a Italic, Bold or Monospace sequence.
+
+**)
 Procedure TSynMDSyn.NullProc;
 
 Begin
   If Not (FRange In [rsMDItalic, rsMDBold, rsMDMonospace]) Then
     Begin
-      FTokenID := tkText;
-      FRange := rsText;
+      FTokenID := tkMDText;
+      FRange := rsMDText;
     End;
   Inc(Run);
 End;
 
-{$REGION IGNORE}
 (**
 
   This method resets the range to text.
@@ -745,7 +933,7 @@ End;
 Procedure TSynMDSyn.ResetRange;
 
 Begin
-  FRange := rsText;          
+  FRange := rsMDText;          
 End;
 
 (**
@@ -796,7 +984,7 @@ Procedure TSynMDSyn.SpaceProc;
 
 Begin
   Inc(Run);
-  FTokenID := tkSpace;
+  FTokenID := tkMDSpace;
   While (FLine[Run] <= #32) And Not IsLineEnd(Run) Do
     Inc(Run);
 End;
@@ -814,7 +1002,7 @@ Procedure TSynMDSyn.SymbolProc;
 
 Begin
   Inc(Run);
-  FTokenID := tkSymbol;
+  FTokenID := tkMDSymbol;
   While CharInSet(FLine[Run], acSymbols) And Not IsLineEnd(Run) Do
     Inc(Run);
 End;
@@ -830,11 +1018,10 @@ End;
 Procedure TSynMDSyn.TextProc;
 
 Begin
-  FTokenID := tkText;
-  FRange := rsText;
+  FTokenID := tkMDText;
+  FRange := rsMDText;
   Inc(Run);
 End;
-{$ENDREGION}
 
 (** Registers the highlighter. **)
 Initialization

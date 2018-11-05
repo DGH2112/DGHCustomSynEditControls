@@ -151,8 +151,6 @@ Type
     Property KeyWords: TUnicodeStrings read fKeyWords write SetKeyWords;
   End;
 
-Procedure Register;
-
 Implementation
 
 Uses
@@ -162,34 +160,18 @@ Uses
   SynEditStrConst;
   {$ENDIF}
 
-Procedure Register;
-
-Begin
-  RegisterComponents('DGH Custom SynEdit Controls', [TSynRegExSyn]);
-End;
-
 Resourcestring
   SYNS_FilterRegularExpressions = 'Regular Expression Files (*.regex)|*.regex';
   SYNS_LangRegularExpressions = 'Regular Expressions';
-  SYNS_FriendlyLangRegularExpressions = 'Regular Expressions';
   SYNS_AttrFullRegExComment = 'RegEx Comment';
-  SYNS_FriendlyAttrFullRegExComment = 'RegEx Comment';
   SYNS_AttrCPPLineComment = 'C++ Line Comment';
-  SYNS_FriendlyAttrCPPLineComment = 'C++ Line Comment';
   SYNS_AttrCPPBlockComment = 'C++ Block Comment';
-  SYNS_FriendlyAttrCPPBlockComment = 'C++ Block Comment';
   SYNS_AttrOptional = 'Optional Operator';
-  SYNS_FriendlyAttrOptional = 'Optional Operator';
   SYNS_AttrRepeat = 'Repeat Operator';
-  SYNS_FriendlyAttrRepeat = 'Repeat Operator';
   SYNS_AttrCharClass = 'Character Class Brace';
-  SYNS_FriendlyAttrCharClass = 'Character Class Brace';
   SYNS_AttrGrouping = 'Grouping Parenthesis';
-  SYNS_FriendlyAttrGroupingClass = 'Grouping Parenthesis';
   SYNS_AttrGroupName = 'Capture Group Name';
-  SYNS_FriendlyAttrGroupName = 'Capture Group Name';
   SYNS_AttrEscapeSeq = 'Escaped Character';
-  SYNS_FriendlyAttrEscapeSeq = 'Escape Character';
 
 Const
   KeyIndices: Array [0..1] Of Integer = (0, -1);
@@ -492,33 +474,33 @@ Begin
   fCaseSensitive := False;
   fCharacterAttri := TSynHighlighterAttributes.Create(SYNS_AttrCharacter, SYNS_FriendlyAttrCharacter);
   AddAndUpdateAttributes(fCharacterAttri, clRed, clYellow, []);
-  fRegExCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrFullRegExComment, SYNS_FriendlyAttrFullRegExComment);
+  fRegExCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrFullRegExComment, SYNS_AttrFullRegExComment);
   AddAndUpdateAttributes(fRegExCommentAttri, clPurple, clNone, [fsItalic]);
-  fCPPLineCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrCPPLineComment, SYNS_FriendlyAttrCPPLineComment);
+  fCPPLineCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrCPPLineComment, SYNS_AttrCPPLineComment);
   AddAndUpdateAttributes(fCPPLineCommentAttri, clOlive, clNone, [fsItalic]);
-  fCPPBlockCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrCPPBlockComment, SYNS_FriendlyAttrCPPBlockComment);
+  fCPPBlockCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrCPPBlockComment, SYNS_AttrCPPBlockComment);
   AddAndUpdateAttributes(fCPPBlockCommentAttri, clFuchsia, clNone, [fsItalic]);
-  fIdentifierAttri := TSynHighlighterAttributes.Create(SYNS_AttrIdentifier, SYNS_FriendlyAttrIdentifier);
+  fIdentifierAttri := TSynHighlighterAttributes.Create(SYNS_AttrIdentifier, SYNS_AttrIdentifier);
   AddAndUpdateAttributes(fIdentifierAttri, clNavy, clNone, []);
   fKeyAttri := TSynHighlighterAttributes.Create(SYNS_AttrKey, SYNS_FriendlyAttrKey);
   AddAndUpdateAttributes(fKeyAttri, clNone, clNone, [fsBold]);
-  fCharClassAttri := TSynHighlighterAttributes.Create(SYNS_AttrCharClass, SYNS_FriendlyAttrCharClass);
+  fCharClassAttri := TSynHighlighterAttributes.Create(SYNS_AttrCharClass, SYNS_AttrCharClass);
   AddAndUpdateAttributes(fCharClassAttri, clMaroon, clNone, [fsBold]);
-  fGroupingAttri := TSynHighlighterAttributes.Create(SYNS_AttrGrouping, SYNS_FriendlyAttrGroupingClass);
+  fGroupingAttri := TSynHighlighterAttributes.Create(SYNS_AttrGrouping, SYNS_AttrGrouping);
   AddAndUpdateAttributes(fGroupingAttri, clMaroon, clNone, [fsBold]);
   fMacroAttri := TSynHighlighterAttributes.Create(SYNS_AttrMacro, SYNS_FriendlyAttrMacro);
   AddAndUpdateAttributes(fMacroAttri, clBlue, clNone, [fsItalic]);
-  fGroupNameAttri := TSynHighlighterAttributes.Create(SYNS_AttrGroupName, SYNS_FriendlyAttrGroupName);
+  fGroupNameAttri := TSynHighlighterAttributes.Create(SYNS_AttrGroupName, SYNS_AttrGroupName);
   AddAndUpdateAttributes(fGroupNameAttri, clNone, clLime, []);
-  fOptionalAttri := TSynHighlighterAttributes.Create(SYNS_AttrOptional, SYNS_FriendlyAttrOptional);
+  fOptionalAttri := TSynHighlighterAttributes.Create(SYNS_AttrOptional, SYNS_AttrOptional);
   AddAndUpdateAttributes(fOptionalAttri, clMaroon, clNone, [fsBold]);
-  fRepeatAttri := TSynHighlighterAttributes.Create(SYNS_AttrRepeat, SYNS_FriendlyAttrRepeat);
+  fRepeatAttri := TSynHighlighterAttributes.Create(SYNS_AttrRepeat, SYNS_AttrRepeat);
   AddAndUpdateAttributes(fRepeatAttri, clMaroon, clNone, [fsBold]);
-  fEscapeAttri := TSynHighlighterAttributes.Create(SYNS_AttrEscapeSeq, SYNS_FriendlyAttrEscapeSeq);
+  fEscapeAttri := TSynHighlighterAttributes.Create(SYNS_AttrEscapeSeq, SYNS_AttrEscapeSeq);
   AddAndUpdateAttributes(fEscapeAttri, clNavy, clNone, []);
-  fSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrSymbol, SYNS_FriendlyAttrSymbol);
+  fSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrSymbol, SYNS_AttrSymbol);
   AddAndUpdateAttributes(fSymbolAttri, clMaroon, clNone, []);
-  fSpaceAttri := TSynHighlighterAttributes.Create(SYNS_AttrSpace, SYNS_FriendlyAttrSpace);
+  fSpaceAttri := TSynHighlighterAttributes.Create(SYNS_AttrSpace, SYNS_AttrSpace);
   AddAndUpdateAttributes(fSpaceAttri, clNone, clNone, []);
   SetAttributesOnChange(DefHighlightChange);
   InitIdent;
@@ -733,7 +715,7 @@ End;
 Class Function TSynRegExSyn.GetFriendlyLanguageName: UnicodeString;
 
 Begin
-  Result := SYNS_FriendlyLangRegularExpressions;
+  Result := SYNS_LangRegularExpressions;
 End;
 
 Class Function TSynRegExSyn.GetLanguageName: String;

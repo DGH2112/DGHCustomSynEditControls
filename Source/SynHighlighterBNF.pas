@@ -1,10 +1,13 @@
+{$IFNDEF QREGEXSYNHIGHLIGHTERGRAMMAR}
 (**
 
-  
+  This module contains a SynEdit Highlighter for Backus-Naur grammar.
+
+  @Author  David Hoyle
+  @Version 1.0
+  @Date    28 Jan 2018
 
 **)
-
-{$IFNDEF QREGEXSYNHIGHLIGHTERGRAMMAR}
 Unit SynHighlighterBNF;
 {$ENDIF}
 
@@ -28,6 +31,7 @@ Uses
   Classes;
 
 Type
+  (** An enumerate to define the types of token in the highlighter. **)
   TtkTokenKind = (
     tkCharacter,
     tkCPPLineComment,
@@ -47,6 +51,7 @@ Type
     tkUnknown
   );
 
+  (** An enumerate to define the tokens that can have a range. **)
   TRangeState = (
     rsUnKnown,
     rsCPPLineComment,
@@ -57,12 +62,15 @@ Type
     rsFreeText
   );
 
+  (** A pointer to a function table. **)
   PIdentFuncTableFunc = ^TIdentFuncTableFunc;
-  TIdentFuncTableFunc = Function(Index: Integer): TtkTokenKind Of Object;
+  (** A type defining a function for the function table. **)
+  TIdentFuncTableFunc = Function(Const Index: Integer): TtkTokenKind Of Object;
 
 Type
+  (** A custom synedit highlighter component for the backus-naur grammar. **)
   TSynBNFSyn = Class(TSynCustomHighlighter)
-  Private
+  Strict Private
     fRange:                 TRangeState;
     fTokenID:               TtkTokenKind;
     fIdentFuncTable:        Array [0 .. 1] Of TIdentFuncTableFunc;
@@ -78,10 +86,11 @@ Type
     fSingleLiteralAttri:    TSynHighlighterAttributes;
     fDoubleLiteralAttri:    TSynHighlighterAttributes;
     fFreeTextAttri:         TSynHighlighterAttributes;
-    Function  FuncKeyword(Index: Integer): TtkTokenKind;
+  Strict Protected
+    Function  FuncKeyword(Const Index: Integer): TtkTokenKind;
     Procedure IdentProc;
     Procedure UnknownProc;
-    Function  AltFunc(Index: Integer): TtkTokenKind;
+    Function  AltFunc(Const Index: Integer): TtkTokenKind;
     Procedure InitIdent;
     Procedure NullProc;
     Procedure SpaceProc;
@@ -103,11 +112,10 @@ Type
     Procedure DoubleLiteralProc;
     Procedure FreeTextOpenProc;
     Procedure FreeTextProc;
-  Protected
     Function  GetSampleSource: UnicodeString; Override;
     Function  IsFilterStored: Boolean; Override;
-    Procedure AddAndUpdateAttributes(Attribute : TSynHighlighterAttributes; ForeColour,
-      BackColour : TColor; FontStyle : TFontStyles);
+    Procedure AddAndUpdateAttributes(Const Attribute: TSynHighlighterAttributes; Const ForeColour,
+      BackColour: TColor; Const FontStyle: TFontStyles);
   Public
     Constructor Create(AOwner: TComponent); Override;
     Destructor Destroy; Override;
@@ -124,26 +132,96 @@ Type
     Function  IsIdentChar(AChar: WideChar): Boolean; Override;
     Procedure Next; Override;
   Published
+    (**
+      A property for accessing the attributes of the character class elements.
+      @precon  None.
+      @postcon Gets and sets the character class attributes.
+      @return  a TSynHighlighterAttributes
+    **)
     Property CharacterAttri: TSynHighlighterAttributes Read fCharacterAttri Write fCharacterAttri;
+    (**
+      A property for accessing the attributes of the C++ Comments elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for C++ Comments.
+      @return  a TSynHighlighterAttributes
+    **)
     Property CPPCommentAttri: TSynHighlighterAttributes Read fCPPCommentAttri
       Write fCPPCommentAttri;
+    (**
+      A property for accessing the attributes of the Rule elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for Rules.
+      @return  a TSynHighlighterAttributes
+    **)
     Property RulesAttri: TSynHighlighterAttributes Read fRulesAttri Write fRulesAttri;
+    (**
+      A property for accessing the attributes of the Optional Pipe elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for optional pipes.
+      @return  a TSynHighlighterAttributes
+    **)
     Property OptionalPipeAttri: TSynHighlighterAttributes Read fOptionalPipeAttri
       Write fOptionalPipeAttri;
+    (**
+      A property for accessing the attributes of the reap operator elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for repeat operators.
+      @return  a TSynHighlighterAttributes
+    **)
     Property RepeatAttri: TSynHighlighterAttributes Read fRepeatAttri Write fRepeatAttri;
+    (**
+      A property for accessing the attributes of the grouping elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for grouping.
+      @return  a TSynHighlighterAttributes
+    **)
     Property GroupingAttri: TSynHighlighterAttributes Read fGroupingAttri Write fGroupingAttri;
+    (**
+      A property for accessing the attributes of the brace elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for braces.
+      @return  a TSynHighlighterAttributes
+    **)
     Property OptionalBraceAttri: TSynHighlighterAttributes Read fOptionalBraceAttri
       Write fOptionalBraceAttri;
+    (**
+      A property for accessing the attributes of the space elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for spaces.
+      @return  a TSynHighlighterAttributes
+    **)
     Property SpaceAttri: TSynHighlighterAttributes Read fSpaceAttri Write fSpaceAttri;
+    (**
+      A property for accessing the attributes of the symbols elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for symbols.
+      @return  a TSynHighlighterAttributes
+    **)
     Property RegExSymbols : TSynHighlighterAttributes Read fSymbolAttri Write fSymbolAttri;
+    (**
+      A property for accessing the attributes of the single literals elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for single literals.
+      @return  a TSynHighlighterAttributes
+    **)
     Property SingleLiteral : TSynHighlighterAttributes Read fSingleLiteralAttri
       Write fSingleLiteralAttri;
+    (**
+      A property for accessing the attributes of the Double Literal elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for double literals.
+      @return  a TSynHighlighterAttributes
+    **)
     Property DoubleLiteral : TSynHighlighterAttributes Read fDoubleLiteralAttri
       Write fDoubleLiteralAttri;
+    (**
+      A property for accessing the attributes of the Free text elements.
+      @precon  None.
+      @postcon Gets and sets the character attributes for Free Text.
+      @return  a TSynHighlighterAttributes
+    **)
     Property FreeText : TSynHighlighterAttributes Read fFreeTextAttri Write fFreeTextAttri;
   End;
-
-Procedure Register;
 
 Implementation
 
@@ -154,45 +232,50 @@ Uses
   SynEditStrConst;
   {$ENDIF}
 
-Procedure Register;
-
-Begin
-  RegisterComponents('DGH Custom SynEdit Controls', [TSynBNFSyn]);
-End;
-
 Resourcestring
+  (** A resource string for the default file filters **)
   SYNS_FilterRegularExpressions = 'Backus-Naur Grammar Files (*.bnf)|*.bnf';
+  (** A resource string for the highlighter language name **)
   SYNS_LangRegularExpressions = 'Backus-Naur';
-  SYNS_FriendlyLangRegularExpressions = 'Backus-Naur';
+  (** A resource string for C++ Comment attribute **)
   SYNS_AttrCPPComment = 'C++ Comment';
-  SYNS_FriendlyAttrCPPComment = 'C++ Comment';
+  (** A resource string for the BNF Rule attribute. **)
   SYNS_AttrRules = 'BNF Rule';
-  SYNS_FriendlyAttrRules = 'BNF Rule';
+  (** A resource string for the Optional Pipe Operator **)
   SYNS_AttrOptionalPipe = 'Optional Pipe Operator';
-  SYNS_FriendlyAttrOptionalPipe = 'Optional Pipe Operator';
+  (** A resource string for the Optional Brace **)
   SYNS_AttrOptionalBrace = 'Optional Brace';
-  SYNS_FriendlyAttrOptionalBrace = 'Optional Brace';
+  (** A resource string for the Repeat Operator **)
   SYNS_AttrRepeat = 'Repeat Operator';
-  SYNS_FriendlyAttrRepeat = 'Repeat Operator';
+  (** A resource string for the Grouping Parenthesis **)
   SYNS_AttrGrouping = 'Grouping Parenthesis';
-  SYNS_FriendlyAttrGroupingClass = 'Grouping Parenthesis';
+  (** A resource string for the Single Quote String Literal **)
   SYNS_AttrSingleLiteral = 'Single Quoted String Literal';
-  SYNS_FriendlyAttrSingleLiteral = 'Single Quoted String Literal';
+  (** A resource string for the Double Quote String Literal **)
   SYNS_AttrDoubleLiteral = 'Double Quoted String Literal';
-  SYNS_FriendlyAttrDoubleLiteral = 'Double Quoted String Literal';
+  (** A resource string for the Free Text **)
   SYNS_AttrFreeText = 'Free Text';
-  SYNS_FriendlyAttrFreeText = 'Free Text';
 
 Const
+  (** Not sure... **)
   KeyIndices: Array [0..1] Of Integer = (0, -1);
+  (** A character array for the repeat operators. **)
   RepeatOperatorsChars = ['+', '*'];
+  (** A character array for the optional operators. **)
   OptionalOperatorsChars = ['|'];
+  (** A character array for the character class grouping. **)
   CharacterClassChars = ['[', ']'];
+  (** A character array for grouping. **)
   GroupingChars = ['(', ')'];
+  (** A character array for C++ Line Comments. **)
   CPPCommentChars = ['/'];
+  (** A character array for Single String Literals **)
   SingleLiteralChars = [''''];
+  (** A character array for Double String Literals **)
   DoubleLiteralChars = ['"'];
+  (** A character array for Free Text **)
   FreeTextChar = ['?'];
+  (** A character array for Symbols **)
   Symbols =
     [#32..#128] - [#32] - ['a'..'z', 'A'..'Z', '0'..'9', '_'] -
       RepeatOperatorsChars -
@@ -204,59 +287,11 @@ Const
       DoubleLiteralChars -
       FreeTextChar;
 
-Procedure TSynBNFSyn.InitIdent;
-
-Var
-  i: Integer;
-
-Begin
-  For i := Low(fIdentFuncTable) To High(fIdentFuncTable) Do
-    If KeyIndices[i] = - 1 Then
-      fIdentFuncTable[i] := AltFunc;
-  fIdentFuncTable[0] := FuncKeyword;
-End;
-
 {$Q-}
 
 
-procedure TSynBNFSyn.FreeTextOpenProc;
-begin
-  inc(Run);
-  fRange := rsFreeText;
-  fTokenID := tkFreeText;
-end;
-
-procedure TSynBNFSyn.FreeTextProc;
-begin
-  Case FLine[Run] Of
-    #0: NullProc;
-    #10: LFProc;
-    #13: CRProc;
-  Else
-    Begin
-      fTokenID := tkFreeText;
-      Repeat
-        If FLine[Run] = '?' Then
-          Begin
-            inc(Run);
-            fRange := rsUnKnown;
-            Break;
-          End;
-        If Not IsLineEnd(Run) Then
-          Inc(Run);
-      Until IsLineEnd(Run);
-    End;
-  End;
-end;
-
-Function TSynBNFSyn.FuncKeyword(Index: Integer): TtkTokenKind;
-
-Begin
-  Result := tkRules;
-End;
-
-Procedure TSynBNFSyn.AddAndUpdateAttributes(Attribute: TSynHighlighterAttributes; ForeColour,
-  BackColour: TColor; FontStyle: TFontStyles);
+Procedure TSynBNFSyn.AddAndUpdateAttributes(Const Attribute: TSynHighlighterAttributes; Const ForeColour,
+  BackColour: TColor; Const FontStyle: TFontStyles);
 
 Begin
   AddAttribute(Attribute);
@@ -265,49 +300,119 @@ Begin
   Attribute.Style := FontStyle;
 End;
 
-Function TSynBNFSyn.AltFunc(Index: Integer): TtkTokenKind;
+Function TSynBNFSyn.AltFunc(Const Index: Integer): TtkTokenKind; //FI:O804
 
 Begin
   Result := tkRules;
 End;
 
-Procedure TSynBNFSyn.SpaceProc;
+Procedure TSynBNFSyn.CharClassProc;
 
 Begin
   inc(Run);
-  If Not (fTokenID In [tkCPPBlockComment]) Then
-    fTokenID := tkSpace;
-  While (FLine[Run] <= #32) And Not IsLineEnd(Run) Do
+  fTokenID := tkOptionalBrace;
+  While CharInSet(FLine[Run], CharacterClassChars) And Not IsLineEnd(Run) Do
     inc(Run);
 End;
 
-Procedure TSynBNFSyn.SymbolProc;
+Procedure TSynBNFSyn.CPPBlockCommentProc;
 
 Begin
-  inc(Run);
-  fTokenID := tkSymbol;
-  While CharInSet(FLine[Run], Symbols) And Not IsLineEnd(Run) Do
-    inc(Run);
-End;
-
-Procedure TSynBNFSyn.NullProc;
-
-Begin
-  If Not (fTokenID In [tkCPPBlockComment]) Then
+  Case FLine[Run] Of
+    #0: NullProc;
+    #10: LFProc;
+    #13: CRProc;
+  Else
     Begin
-      fTokenID := tkNull;
-      fRange := rsUnKnown;
+      fTokenID := tkCPPBlockComment;
+      Repeat
+        If (FLine[Run] = '/') And (FLine[Run - 1] = '*') Then
+          Begin
+            inc(Run);
+            fRange := rsUnKnown;
+            Break;
+          End;
+        If Not IsLineEnd(Run) Then
+          inc(Run);
+      Until IsLineEnd(Run);
     End;
-  inc(Run);
+  End;
 End;
 
-Procedure TSynBNFSyn.OptionalOperatorProc;
+Procedure TSynBNFSyn.CPPCommentOpenProc;
 
 Begin
-  inc(Run);
-  fTokenID := tkOptionalPipe;
-  While CharInSet(FLine[Run], OptionalOperatorsChars) And Not IsLineEnd(Run) Do
-    inc(Run);
+  Inc(Run);
+  If FLine[Run] = '*' Then
+    Begin
+      Inc(Run);
+      fRange := rsCPPBlockComment;
+      fTokenID := tkCPPBlockComment;
+    End Else
+  If FLine[Run] = '/' Then
+    Begin
+      Inc(Run);
+      fRange := rsCPPLineComment;
+      fTokenID := tkCPPLineComment;
+    End
+  Else
+    fTokenID := tkSymbol;
+End;
+
+Procedure TSynBNFSyn.CPPLineCommentProc;
+
+Begin
+  Case FLine[Run] Of
+    #0: NullProc;
+    #10: LFProc;
+    #13: CRProc;
+  Else
+    Begin
+      fTokenID := tkCPPLineComment;
+      Repeat
+        If Not IsLineEnd(Run) Then
+          inc(Run);
+      Until IsLineEnd(Run);
+    End;
+  End;
+End;
+
+Constructor TSynBNFSyn.Create(AOwner: TComponent);
+
+Const
+  iLightYellow = $80FFFF;
+
+Begin
+  Inherited Create(AOwner);
+  fCaseSensitive := False;
+  fCharacterAttri := TSynHighlighterAttributes.Create(SYNS_AttrCharacter, SYNS_FriendlyAttrCharacter);
+  AddAndUpdateAttributes(fCharacterAttri, clRed, clYellow, []);
+  fCPPCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrCPPComment, SYNS_AttrCPPComment);
+  AddAndUpdateAttributes(fCPPCommentAttri, clPurple, clNone, [fsItalic]);
+  fRulesAttri := TSynHighlighterAttributes.Create(SYNS_AttrRules, SYNS_AttrRules);
+  AddAndUpdateAttributes(fRulesAttri, clBlue, clNone, []);
+  fGroupingAttri := TSynHighlighterAttributes.Create(SYNS_AttrGrouping, SYNS_AttrGrouping);
+  AddAndUpdateAttributes(fGroupingAttri, clMaroon, clNone, [fsBold]);
+  fOptionalPipeAttri := TSynHighlighterAttributes.Create(SYNS_AttrOptionalPipe, SYNS_AttrOptionalPipe);
+  AddAndUpdateAttributes(fOptionalPipeAttri, clMaroon, clNone, [fsBold]);
+  fOptionalBraceAttri := TSynHighlighterAttributes.Create(SYNS_AttrOptionalBrace, SYNS_AttrOptionalBrace);
+  AddAndUpdateAttributes(fOptionalBraceAttri, clMaroon, clNone, [fsBold]);
+  fRepeatAttri := TSynHighlighterAttributes.Create(SYNS_AttrRepeat, SYNS_AttrRepeat);
+  AddAndUpdateAttributes(fRepeatAttri, clMaroon, clNone, [fsBold]);
+  fSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrSymbol, SYNS_AttrSymbol);
+  AddAndUpdateAttributes(fSymbolAttri, clMaroon, clNone, []);
+  fSingleLiteralAttri := TSynHighlighterAttributes.Create(SYNS_AttrSingleLiteral, SYNS_AttrSingleLiteral);
+  AddAndUpdateAttributes(fSingleLiteralAttri, clBlack, clNone, []);
+  fDoubleLiteralAttri := TSynHighlighterAttributes.Create(SYNS_AttrDoubleLiteral, SYNS_AttrDoubleLiteral);
+  AddAndUpdateAttributes(fDoubleLiteralAttri, clBlack, clNone, []);
+  fFreeTextAttri := TSynHighlighterAttributes.Create(SYNS_AttrFreeText, SYNS_AttrFreeText);
+  AddAndUpdateAttributes(fFreeTextAttri, clGreen, iLightYellow, []);
+  fSpaceAttri := TSynHighlighterAttributes.Create(SYNS_AttrSpace, SYNS_AttrSpace);
+  AddAndUpdateAttributes(fSpaceAttri, clNone, clNone, []);
+  SetAttributesOnChange(DefHighlightChange);
+  InitIdent;
+  fDefaultFilter := SYNS_FilterRegularExpressions;
+  fRange := rsUnKnown;
 End;
 
 Procedure TSynBNFSyn.CRProc;
@@ -359,128 +464,126 @@ begin
   End;
 end;
 
-Procedure TSynBNFSyn.LFProc;
-
-Begin
-  If Not (fTokenID In [tkCPPBlockComment]) Then
-    Begin
-      fTokenID := tkSpace;
-      fRange := rsUnKnown;
-    End;
+procedure TSynBNFSyn.FreeTextOpenProc;
+begin
   inc(Run);
-End;
+  fRange := rsFreeText;
+  fTokenID := tkFreeText;
+end;
 
-Procedure TSynBNFSyn.CharClassProc;
-
-Begin
-  inc(Run);
-  fTokenID := tkOptionalBrace;
-  While CharInSet(FLine[Run], CharacterClassChars) And Not IsLineEnd(Run) Do
-    inc(Run);
-End;
-
-Procedure TSynBNFSyn.CPPCommentOpenProc;
-
-Begin
-  Inc(Run);
-  If FLine[Run] = '*' Then
-    Begin
-      Inc(Run);
-      fRange := rsCPPBlockComment;
-      fTokenID := tkCPPBlockComment;
-    End Else
-  If FLine[Run] = '/' Then
-    Begin
-      Inc(Run);
-      fRange := rsCPPLineComment;
-      fTokenID := tkCPPLineComment;
-    End
-  Else
-    fTokenID := tkSymbol;
-End;
-
-Procedure TSynBNFSyn.CPPLineCommentProc;
-
-Begin
+procedure TSynBNFSyn.FreeTextProc;
+begin
   Case FLine[Run] Of
     #0: NullProc;
     #10: LFProc;
     #13: CRProc;
   Else
     Begin
-      fTokenID := tkCPPLineComment;
+      fTokenID := tkFreeText;
       Repeat
-        If Not IsLineEnd(Run) Then
-          inc(Run);
-      Until IsLineEnd(Run);
-    End;
-  End;
-End;
-
-Procedure TSynBNFSyn.CPPBlockCommentProc;
-
-Begin
-  Case FLine[Run] Of
-    #0: NullProc;
-    #10: LFProc;
-    #13: CRProc;
-  Else
-    Begin
-      fTokenID := tkCPPBlockComment;
-      Repeat
-        If (FLine[Run] = '/') And (FLine[Run - 1] = '*') Then
+        If FLine[Run] = '?' Then
           Begin
             inc(Run);
             fRange := rsUnKnown;
             Break;
           End;
         If Not IsLineEnd(Run) Then
-          inc(Run);
+          Inc(Run);
       Until IsLineEnd(Run);
     End;
   End;
-End;
+end;
 
-Constructor TSynBNFSyn.Create(AOwner: TComponent);
+Function TSynBNFSyn.FuncKeyword(Const Index: Integer): TtkTokenKind; //FI:O804
 
 Begin
-  Inherited Create(AOwner);
-  fCaseSensitive := False;
-  fCharacterAttri := TSynHighlighterAttributes.Create(SYNS_AttrCharacter, SYNS_FriendlyAttrCharacter);
-  AddAndUpdateAttributes(fCharacterAttri, clRed, clYellow, []);
-  fCPPCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrCPPComment,
-    SYNS_FriendlyAttrCPPComment);
-  AddAndUpdateAttributes(fCPPCommentAttri, clPurple, clNone, [fsItalic]);
-  fRulesAttri := TSynHighlighterAttributes.Create(SYNS_AttrRules, SYNS_FriendlyAttrRules);
-  AddAndUpdateAttributes(fRulesAttri, clBlue, clNone, []);
-  fGroupingAttri := TSynHighlighterAttributes.Create(SYNS_AttrGrouping,
-    SYNS_FriendlyAttrGroupingClass);
-  AddAndUpdateAttributes(fGroupingAttri, clMaroon, clNone, [fsBold]);
-  fOptionalPipeAttri := TSynHighlighterAttributes.Create(SYNS_AttrOptionalPipe,
-    SYNS_FriendlyAttrOptionalPipe);
-  AddAndUpdateAttributes(fOptionalPipeAttri, clMaroon, clNone, [fsBold]);
-  fOptionalBraceAttri := TSynHighlighterAttributes.Create(SYNS_AttrOptionalBrace,
-    SYNS_FriendlyAttrOptionalBrace);
-  AddAndUpdateAttributes(fOptionalBraceAttri, clMaroon, clNone, [fsBold]);
-  fRepeatAttri := TSynHighlighterAttributes.Create(SYNS_AttrRepeat, SYNS_FriendlyAttrRepeat);
-  AddAndUpdateAttributes(fRepeatAttri, clMaroon, clNone, [fsBold]);
-  fSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrSymbol, SYNS_FriendlyAttrSymbol);
-  AddAndUpdateAttributes(fSymbolAttri, clMaroon, clNone, []);
-  fSingleLiteralAttri := TSynHighlighterAttributes.Create(SYNS_AttrSingleLiteral,
-    SYNS_FriendlyAttrSingleLiteral);
-  AddAndUpdateAttributes(fSingleLiteralAttri, clBlack, clNone, []);
-  fDoubleLiteralAttri := TSynHighlighterAttributes.Create(SYNS_AttrDoubleLiteral,
-    SYNS_FriendlyAttrDoubleLiteral);
-  AddAndUpdateAttributes(fDoubleLiteralAttri, clBlack, clNone, []);
-  fFreeTextAttri := TSynHighlighterAttributes.Create(SYNS_AttrFreeText,
-    SYNS_FriendlyAttrFreeText);
-  AddAndUpdateAttributes(fFreeTextAttri, clGreen, $80FFFF, []);
-  fSpaceAttri := TSynHighlighterAttributes.Create(SYNS_AttrSpace, SYNS_FriendlyAttrSpace);
-  AddAndUpdateAttributes(fSpaceAttri, clNone, clNone, []);
-  SetAttributesOnChange(DefHighlightChange);
-  InitIdent;
-  fDefaultFilter := SYNS_FilterRegularExpressions;
-  fRange := rsUnKnown;
+  Result := tkRules;
+End;
+
+Function TSynBNFSyn.GetDefaultAttribute(Index: Integer): TSynHighlighterAttributes;
+
+Begin
+  Case Index Of
+    SYN_ATTR_COMMENT: Result := fCPPCommentAttri;
+    SYN_ATTR_WHITESPACE: Result := fSpaceAttri;
+  Else
+    Result := Nil;
+  End;
+End;
+
+Function TSynBNFSyn.GetEol: Boolean;
+
+Begin
+  Result := Run = fLineLen + 1;
+End;
+
+Class Function TSynBNFSyn.GetFriendlyLanguageName: UnicodeString;
+
+Begin
+  Result := SYNS_LangRegularExpressions;
+End;
+
+Class Function TSynBNFSyn.GetLanguageName: String;
+
+Begin
+  Result := SYNS_LangRegularExpressions;
+End;
+
+Function TSynBNFSyn.GetRange: Pointer;
+
+Begin
+  Result := Pointer(fRange);
+End;
+
+Function TSynBNFSyn.GetSampleSource: UnicodeString;
+
+ResourceString
+  strSampleSource = 'Sample source for: '#13#10'RegEx Syntax Parser/Highlighter';
+
+Begin
+  Result := strSampleSource;
+End;
+
+Function TSynBNFSyn.GetTokenAttribute: TSynHighlighterAttributes;
+
+Begin
+  Case GetTokenID Of
+    tkCPPLineComment: Result := fCPPCommentAttri;
+    tkCPPBlockComment: Result := fCPPCommentAttri;
+    tkOptionalPipe: Result := fOptionalPipeAttri;
+    tkOptionalBrace: Result := fOptionalBraceAttri;
+    tkRules: Result := fRulesAttri;
+    tkRepeat: Result := fRepeatAttri;
+    tkSymbol: Result := fSymbolAttri;
+    tkGrouping: Result := fGroupingAttri;
+    tkSpace: Result := fSpaceAttri;
+    tkSingleLiteral: Result := SingleLiteral;
+    tkDoubleLiteral: Result := DoubleLiteral;
+    tkFreeText: Result := FreeText;
+  Else
+    Result := fCharacterAttri;
+  End;
+End;
+
+Function TSynBNFSyn.GetTokenID: TtkTokenKind;
+
+Begin
+  Result := fTokenID;
+End;
+
+Function TSynBNFSyn.GetTokenKind: Integer;
+
+Begin
+  Result := Ord(fTokenID);
+End;
+
+Procedure TSynBNFSyn.GroupingProc;
+
+Begin
+  inc(Run);
+  fTokenID := tkGrouping;
+  While CharInSet(FLine[Run], GroupingChars) And Not IsLineEnd(Run) Do
+    inc(Run);
 End;
 
 Procedure TSynBNFSyn.IdentProc;
@@ -491,11 +594,44 @@ Begin
   fTokenID := tkIdentifier;
 End;
 
-Procedure TSynBNFSyn.UnknownProc;
+Procedure TSynBNFSyn.InitIdent;
+
+Var
+  i: Integer;
 
 Begin
+  For i := Low(fIdentFuncTable) To High(fIdentFuncTable) Do
+    If KeyIndices[i] = - 1 Then
+      fIdentFuncTable[i] := AltFunc;
+  fIdentFuncTable[0] := FuncKeyword;
+End;
+
+Function TSynBNFSyn.IsFilterStored: Boolean;
+
+Begin
+  Result := fDefaultFilter <> SYNS_FilterRegularExpressions;
+End;
+
+Function TSynBNFSyn.IsIdentChar(AChar: WideChar): Boolean;
+
+Begin
+  Case AChar Of
+    '!', '_', '0' .. '9', 'a' .. 'z', 'A' .. 'Z':
+      Result := True;
+  Else
+    Result := False;
+  End;
+End;
+
+Procedure TSynBNFSyn.LFProc;
+
+Begin
+  If Not (fTokenID In [tkCPPBlockComment]) Then
+    Begin
+      fTokenID := tkSpace;
+      fRange := rsUnKnown;
+    End;
   inc(Run);
-  fTokenID := tkUnknown;
 End;
 
 Procedure TSynBNFSyn.Next;
@@ -535,71 +671,47 @@ Begin
   Inherited;
 End;
 
-Function TSynBNFSyn.GetDefaultAttribute(Index: Integer): TSynHighlighterAttributes;
+Procedure TSynBNFSyn.NullProc;
 
 Begin
-  Case Index Of
-    SYN_ATTR_COMMENT: Result := fCPPCommentAttri;
-    SYN_ATTR_WHITESPACE: Result := fSpaceAttri;
-  Else
-    Result := Nil;
-  End;
+  If Not (fTokenID In [tkCPPBlockComment]) Then
+    Begin
+      fTokenID := tkNull;
+      fRange := rsUnKnown;
+    End;
+  inc(Run);
 End;
 
-Function TSynBNFSyn.GetEol: Boolean;
-
-Begin
-  Result := Run = fLineLen + 1;
-End;
-
-Function TSynBNFSyn.GetTokenID: TtkTokenKind;
-
-Begin
-  Result := fTokenID;
-End;
-
-Function TSynBNFSyn.GetTokenAttribute: TSynHighlighterAttributes;
-
-Begin
-  Case GetTokenID Of
-    tkCPPLineComment: Result := fCPPCommentAttri;
-    tkCPPBlockComment: Result := fCPPCommentAttri;
-    tkOptionalPipe: Result := fOptionalPipeAttri;
-    tkOptionalBrace: Result := fOptionalBraceAttri;
-    tkRules: Result := fRulesAttri;
-    tkRepeat: Result := fRepeatAttri;
-    tkSymbol: Result := fSymbolAttri;
-    tkGrouping: Result := fGroupingAttri;
-    tkSpace: Result := fSpaceAttri;
-    tkSingleLiteral: Result := SingleLiteral;
-    tkDoubleLiteral: Result := DoubleLiteral;
-    tkFreeText: Result := FreeText;
-  Else
-    Result := fCharacterAttri;
-  End;
-End;
-
-Function TSynBNFSyn.GetTokenKind: Integer;
-
-Begin
-  Result := Ord(fTokenID);
-End;
-
-Procedure TSynBNFSyn.GroupingProc;
+Procedure TSynBNFSyn.OptionalOperatorProc;
 
 Begin
   inc(Run);
-  fTokenID := tkGrouping;
-  While CharInSet(FLine[Run], GroupingChars) And Not IsLineEnd(Run) Do
+  fTokenID := tkOptionalPipe;
+  While CharInSet(FLine[Run], OptionalOperatorsChars) And Not IsLineEnd(Run) Do
     inc(Run);
 End;
 
-Procedure TSynBNFSyn.RuleOpenProc;
+Procedure TSynBNFSyn.RepeatOperatorProc;
+
+Var
+  boolEscape: Boolean;
 
 Begin
+  boolEscape := (Run > 0) And (CharInSet(FLine[Pred(Run)], [#32, '(']));
   inc(Run);
-  fRange := rsRule;
-  fTokenID := tkRules;
+  If Not boolEscape Then
+    Begin
+      fTokenID := tkRepeat;
+      While CharInSet(FLine[Run], RepeatOperatorsChars) And Not IsLineEnd(Run) Do
+        inc(Run);
+    End Else
+      fTokenID := tkSymbol;
+End;
+
+Procedure TSynBNFSyn.ResetRange;
+
+Begin
+  fRange := rsUnKnown;
 End;
 
 Procedure TSynBNFSyn.RuleNameProc;
@@ -632,64 +744,12 @@ Begin
   End;
 End;
 
-Function TSynBNFSyn.IsIdentChar(AChar: WideChar): Boolean;
+Procedure TSynBNFSyn.RuleOpenProc;
 
 Begin
-  Case AChar Of
-    '!', '_', '0' .. '9', 'a' .. 'z', 'A' .. 'Z':
-      Result := True;
-  Else
-    Result := False;
-  End;
-End;
-
-Function TSynBNFSyn.GetSampleSource: UnicodeString;
-
-Begin
-  Result :=
-    'Sample source for: '#13#10 +
-    'RegEx Syntax Parser/Highlighter';
-End;
-
-Function TSynBNFSyn.IsFilterStored: Boolean;
-
-Begin
-  Result := fDefaultFilter <> SYNS_FilterRegularExpressions;
-End;
-
-Class Function TSynBNFSyn.GetFriendlyLanguageName: UnicodeString;
-
-Begin
-  Result := SYNS_FriendlyLangRegularExpressions;
-End;
-
-Class Function TSynBNFSyn.GetLanguageName: String;
-
-Begin
-  Result := SYNS_LangRegularExpressions;
-End;
-
-Procedure TSynBNFSyn.RepeatOperatorProc;
-
-Var
-  boolEscape: Boolean;
-
-Begin
-  boolEscape := (Run > 0) And (CharInSet(FLine[Pred(Run)], [#32, '(']));
   inc(Run);
-  If Not boolEscape Then
-    Begin
-      fTokenID := tkRepeat;
-      While CharInSet(FLine[Run], RepeatOperatorsChars) And Not IsLineEnd(Run) Do
-        inc(Run);
-    End Else
-      fTokenID := tkSymbol;
-End;
-
-Procedure TSynBNFSyn.ResetRange;
-
-Begin
-  fRange := rsUnKnown;
+  fRange := rsRule;
+  fTokenID := tkRules;
 End;
 
 Procedure TSynBNFSyn.SetRange(Value: Pointer);
@@ -729,12 +789,33 @@ begin
   End;
 end;
 
-Function TSynBNFSyn.GetRange: Pointer;
+Procedure TSynBNFSyn.SpaceProc;
 
 Begin
-  Result := Pointer(fRange);
+  inc(Run);
+  If Not (fTokenID In [tkCPPBlockComment]) Then
+    fTokenID := tkSpace;
+  While (FLine[Run] <= #32) And Not IsLineEnd(Run) Do
+    inc(Run);
 End;
 
+Procedure TSynBNFSyn.SymbolProc;
+
+Begin
+  inc(Run);
+  fTokenID := tkSymbol;
+  While CharInSet(FLine[Run], Symbols) And Not IsLineEnd(Run) Do
+    inc(Run);
+End;
+
+Procedure TSynBNFSyn.UnknownProc;
+
+Begin
+  inc(Run);
+  fTokenID := tkUnknown;
+End;
+
+(** Registers the highlighter. **)
 Initialization
   {$IFNDEF SYN_CPPB_1}
   RegisterPlaceableHighlighter(TSynBNFSyn);
