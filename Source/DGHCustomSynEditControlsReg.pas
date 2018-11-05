@@ -4,7 +4,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    27 Jan 2018
+  @Date    05 Nov 2018
   
 **)
 Unit DGHCustomSynEditControlsReg;

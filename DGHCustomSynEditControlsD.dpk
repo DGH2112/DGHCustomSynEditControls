@@ -5,7 +5,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    27 Jan 2018
+  @Date    05 Nov 2018
   
 **)
 Package DGHCustomSynEditControlsD;
@@ -46,7 +46,7 @@ requires
   vcl,
   designide,
   SynEdit_R,
-  DGHCustomSynEditConrtolsR;
+  DGHCustomSynEditControlsR;
 
 contains
   DGHCustomSynEditControlsReg in 'Source\DGHCustomSynEditControlsReg.pas';

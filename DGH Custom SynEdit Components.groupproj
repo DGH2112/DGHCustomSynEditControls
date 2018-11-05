@@ -7,7 +7,7 @@
             <Dependencies/>
         </Projects>
         <Projects Include="DGHCustomSynEditControlsD.dproj">
-            <Dependencies>DGHCustomSynEditControlsR.dproj</Dependencies>
+            <Dependencies/>
         </Projects>
     </ItemGroup>
     <ProjectExtensions>
@@ -26,13 +26,13 @@
     <Target Name="DGHCustomSynEditControlsR:Make">
         <MSBuild Projects="DGHCustomSynEditControlsR.dproj" Targets="Make"/>
     </Target>
-    <Target Name="DGHCustomSynEditControlsD" DependsOnTargets="DGHCustomSynEditControlsR">
+    <Target Name="DGHCustomSynEditControlsD">
         <MSBuild Projects="DGHCustomSynEditControlsD.dproj"/>
     </Target>
-    <Target Name="DGHCustomSynEditControlsD:Clean" DependsOnTargets="DGHCustomSynEditControlsR:Clean">
+    <Target Name="DGHCustomSynEditControlsD:Clean">
         <MSBuild Projects="DGHCustomSynEditControlsD.dproj" Targets="Clean"/>
     </Target>
-    <Target Name="DGHCustomSynEditControlsD:Make" DependsOnTargets="DGHCustomSynEditControlsR:Make">
+    <Target Name="DGHCustomSynEditControlsD:Make">
         <MSBuild Projects="DGHCustomSynEditControlsD.dproj" Targets="Make"/>
     </Target>
     <Target Name="Build">
