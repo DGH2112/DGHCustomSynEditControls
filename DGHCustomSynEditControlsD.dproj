@@ -62,7 +62,7 @@
         <DCC_F>false</DCC_F>
         <DCC_K>false</DCC_K>
         <DCC_HppOutputARM>true</DCC_HppOutputARM>
-        <DCC_UnitSearchPath>D:\Documents\RAD Studio\Library\SynEdit 2.1.0\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
+        <DCC_UnitSearchPath>SynEdit 2.1.0\Source;$(DCC_UnitSearchPath)</DCC_UnitSearchPath>
         <DCC_DcpOutput>\Documents\RAD Studio\Dcp</DCC_DcpOutput>
         <DesignOnlyPackage>true</DesignOnlyPackage>
         <DCC_ShowGeneralMessages>true</DCC_ShowGeneralMessages>
