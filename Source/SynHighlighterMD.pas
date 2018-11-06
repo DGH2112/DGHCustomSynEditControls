@@ -5,7 +5,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    01 Feb 2018
+  @Date    06 Nov 2018
 
 **)
 Unit SynHighlighterMD;
@@ -293,7 +293,7 @@ Begin
   Inherited Create(AOwner);
   fCaseSensitive := False;
   FTokenAttri[tkMDLineComment] := TSynHighlighterAttributes.Create(SYNS_AttrComment, SYNS_AttrComment);
-  AddAndUpdateAttributes(FTokenAttri[tkMDLineComment], clPurple, clNone, [fsItalic]);
+  AddAndUpdateAttributes(FTokenAttri[tkMDLineComment], clNone, clNone, [fsItalic]);
   FTokenAttri[tkMDSubHeading] := TSynHighlighterAttributes.Create(SYNS_AttrSubheading, SYNS_AttrSubheading);
   AddAndUpdateAttributes(FTokenAttri[tkMDSubHeading], clNone, clNone, [fsBold, fsUnderline]);
   FTokenAttri[tkMDItalic] := TSynHighlighterAttributes.Create(SYNS_AttrItalic, SYNS_AttrItalic);

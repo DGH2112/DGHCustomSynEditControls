@@ -5,7 +5,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    28 Jan 2018
+  @Date    06 Nov 2018
 
 **)
 Unit SynHighlighterBNF;
@@ -379,34 +379,31 @@ End;
 
 Constructor TSynBNFSyn.Create(AOwner: TComponent);
 
-Const
-  iLightYellow = $80FFFF;
-
 Begin
   Inherited Create(AOwner);
   fCaseSensitive := False;
   fCharacterAttri := TSynHighlighterAttributes.Create(SYNS_AttrCharacter, SYNS_FriendlyAttrCharacter);
-  AddAndUpdateAttributes(fCharacterAttri, clRed, clYellow, []);
+  AddAndUpdateAttributes(fCharacterAttri, clNone, clNone, []);
   fCPPCommentAttri := TSynHighlighterAttributes.Create(SYNS_AttrCPPComment, SYNS_AttrCPPComment);
-  AddAndUpdateAttributes(fCPPCommentAttri, clPurple, clNone, [fsItalic]);
+  AddAndUpdateAttributes(fCPPCommentAttri, clNone, clNone, [fsItalic]);
   fRulesAttri := TSynHighlighterAttributes.Create(SYNS_AttrRules, SYNS_AttrRules);
-  AddAndUpdateAttributes(fRulesAttri, clBlue, clNone, []);
+  AddAndUpdateAttributes(fRulesAttri, clNone, clNone, []);
   fGroupingAttri := TSynHighlighterAttributes.Create(SYNS_AttrGrouping, SYNS_AttrGrouping);
-  AddAndUpdateAttributes(fGroupingAttri, clMaroon, clNone, [fsBold]);
+  AddAndUpdateAttributes(fGroupingAttri, clNone, clNone, [fsBold]);
   fOptionalPipeAttri := TSynHighlighterAttributes.Create(SYNS_AttrOptionalPipe, SYNS_AttrOptionalPipe);
-  AddAndUpdateAttributes(fOptionalPipeAttri, clMaroon, clNone, [fsBold]);
+  AddAndUpdateAttributes(fOptionalPipeAttri, clNone, clNone, [fsBold]);
   fOptionalBraceAttri := TSynHighlighterAttributes.Create(SYNS_AttrOptionalBrace, SYNS_AttrOptionalBrace);
-  AddAndUpdateAttributes(fOptionalBraceAttri, clMaroon, clNone, [fsBold]);
+  AddAndUpdateAttributes(fOptionalBraceAttri, clNone, clNone, [fsBold]);
   fRepeatAttri := TSynHighlighterAttributes.Create(SYNS_AttrRepeat, SYNS_AttrRepeat);
-  AddAndUpdateAttributes(fRepeatAttri, clMaroon, clNone, [fsBold]);
+  AddAndUpdateAttributes(fRepeatAttri, clNone, clNone, [fsBold]);
   fSymbolAttri := TSynHighlighterAttributes.Create(SYNS_AttrSymbol, SYNS_AttrSymbol);
-  AddAndUpdateAttributes(fSymbolAttri, clMaroon, clNone, []);
+  AddAndUpdateAttributes(fSymbolAttri, clNone, clNone, []);
   fSingleLiteralAttri := TSynHighlighterAttributes.Create(SYNS_AttrSingleLiteral, SYNS_AttrSingleLiteral);
-  AddAndUpdateAttributes(fSingleLiteralAttri, clBlack, clNone, []);
+  AddAndUpdateAttributes(fSingleLiteralAttri, clNone, clNone, []);
   fDoubleLiteralAttri := TSynHighlighterAttributes.Create(SYNS_AttrDoubleLiteral, SYNS_AttrDoubleLiteral);
-  AddAndUpdateAttributes(fDoubleLiteralAttri, clBlack, clNone, []);
+  AddAndUpdateAttributes(fDoubleLiteralAttri, clNone, clNone, []);
   fFreeTextAttri := TSynHighlighterAttributes.Create(SYNS_AttrFreeText, SYNS_AttrFreeText);
-  AddAndUpdateAttributes(fFreeTextAttri, clGreen, iLightYellow, []);
+  AddAndUpdateAttributes(fFreeTextAttri, clNone, clNone, []);
   fSpaceAttri := TSynHighlighterAttributes.Create(SYNS_AttrSpace, SYNS_AttrSpace);
   AddAndUpdateAttributes(fSpaceAttri, clNone, clNone, []);
   SetAttributesOnChange(DefHighlightChange);
