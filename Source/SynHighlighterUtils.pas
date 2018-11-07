@@ -5,7 +5,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    05 Nov 2018
+  @Date    07 Nov 2018
   
 **)
 Unit SynHighlighterUtils;
@@ -42,6 +42,9 @@ Type
 Implementation
 
 Uses
+  {$IFDEF DEBUG}
+  CodeSiteLogging,
+  {$ENDIF}
   System.SysUtils,
   System.TypInfo,
   System.StrUtils,
@@ -129,6 +132,7 @@ Var
   iPos : Integer;
   
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.HighlighterName', tmoTiming);{$ENDIF}
   If Assigned(Highlighter) Then
     Begin
       Result := GetShortHint(Highlighter.DefaultFilter);
@@ -170,6 +174,7 @@ Var
   eoption : TSynEditorOption;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.LoadEditorSettings', tmoTiming);{$ENDIF}
   Editor.Color := StringToColor(INIFile.ReadString(strIniSection, strColourKey,
     ColorToString(clWindow)));
   Editor.ActiveLineColor := StringToColor(INIFile.ReadString(strIniSection, strActiveLineColourKey,
@@ -220,6 +225,7 @@ Var
   strIniSection : String;
   
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.LoadFromIniFile', tmoTiming);{$ENDIF}
   strIniSection := IfThen(Assigned(Editor.Highlighter), HighlighterName(Editor.Highlighter),
     strDefaultHighlightName);
   LoadEditorSettings(INIFile, strIniSection, Editor);
@@ -248,6 +254,7 @@ Const
   iDefaultModificationBarWidth = 4;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.LoadGutterSettings', tmoTiming);{$ENDIF}
   Editor.Gutter.AutoSize := INIFile.ReadBool(strIniSection, strAutoSizeKey, False);
   Editor.Gutter.Width := INIFile.ReadInteger(strIniSection, strGutterWidthKey, iDefaultGutterWidth);
   Editor.Gutter.Color := StringToColor(INIFile.ReadString(strIniSection, strGutterColourKey,
@@ -294,6 +301,7 @@ Class Procedure TDGHCustomSynEditFunctions.LoadHighlighterFromINIFile(Const INIF
   Procedure LoadAttribute(Const A : TSynHighlighterAttributes; Const strKey, strName : String);
 
   Begin
+    {$IFDEF CODESITE}CodeSite.TraceMethod('LoadAttribute', tmoTiming);{$ENDIF}
     A.Background := StringToColor(INIFile.ReadString(strKey, strName + strBackgroundKey,
       ColorToString(A.Background)));
     A.Foreground := StringToColor(INIFile.ReadString(strKey, strName + strForegroundKey,
@@ -311,6 +319,7 @@ Var
   iScheme : Integer;
 
 begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.LoadHighlighterFromINIFile', tmoTiming);{$ENDIF}
   If Assigned(Highlighter) Then
     Begin
       If Highlighter Is TSynMultiSyn Then
@@ -357,6 +366,7 @@ Var
   eOption : TSynEditorOption;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.SaveEditorSettings', tmoTiming);{$ENDIF}
   INIFile.WriteString(strIniSection, strColourKey, ColorToString(Editor.Color));
   INIFile.WriteString(strIniSection, strActiveLineColourKey, ColorToString(Editor.ActiveLineColor));
   INIFile.WriteString(strIniSection, strFontNameKey, Editor.Font.Name);
@@ -396,6 +406,7 @@ Class Procedure TDGHCustomSynEditFunctions.SaveGutterSettings(Const INIFile: TMe
   Const strIniSection: String; Const Editor: TSynEdit);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.SaveGutterSettings', tmoTiming);{$ENDIF}
   INIFile.WriteBool(strIniSection, strAutoSizeKey, Editor.Gutter.AutoSize);
   INIFile.WriteInteger(strIniSection, strGutterWidthKey, Editor.Gutter.Width);
   INIFile.WriteString(strIniSection, strGutterColourKey, ColorToString(Editor.Gutter.Color));
@@ -438,6 +449,7 @@ Class Procedure TDGHCustomSynEditFunctions.SaveHighlighterToINIFile(Const INIFil
   Procedure SaveAttribute(Const A : TSynHighlighterAttributes; Const strKey, strName : String);
 
   Begin
+    {$IFDEF CODESITE}CodeSite.TraceMethod('SaveAttribute', tmoTiming);{$ENDIF}
     INIFile.WriteString(strKey, strName + strBackgroundKey, ColorToString(A.Background));
     INIFile.WriteString(strKey, strName + strForegroundKey, ColorToString(A.Foreground));
     INIFile.WriteInteger(strKey, strName + strStyleKey, Byte(A.Style));
@@ -452,6 +464,7 @@ Var
   strName : String;
 
 begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.SaveHighlighterToINIFile', tmoTiming);{$ENDIF}
   If Assigned(Highlighter) Then
     Begin
       If Highlighter Is TSynMultiSyn Then
@@ -493,6 +506,7 @@ Var
   strIniSection : String;
   
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.SaveToIniFile', tmoTiming);{$ENDIF}
   strIniSection := IfThen(Assigned(Editor.Highlighter), HighlighterName(Editor.Highlighter), 
     strDefaultHighlightName);
   SaveEditorSettings(INIFile, strIniSection, Editor);
@@ -502,3 +516,4 @@ Begin
 End;
 
 End.
+

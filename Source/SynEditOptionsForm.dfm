@@ -38,6 +38,10 @@ object frmEditorOptions: TfrmEditorOptions
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'Editor'
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         456
         508)
@@ -412,47 +416,42 @@ object frmEditorOptions: TfrmEditorOptions
             40)
           object chkBold: TCheckBox
             Left = 18
-            Top = 10
+            Top = 11
             Width = 71
             Height = 17
             Anchors = []
             Caption = '&Bold'
             TabOrder = 0
             ExplicitLeft = 19
-            ExplicitTop = 11
           end
           object chkItalics: TCheckBox
             Left = 125
-            Top = 10
+            Top = 11
             Width = 71
             Height = 17
             Anchors = []
             Caption = '&Italics'
             TabOrder = 1
             ExplicitLeft = 126
-            ExplicitTop = 11
           end
           object chkStrikeout: TCheckBox
             Left = 232
-            Top = 10
+            Top = 11
             Width = 71
             Height = 17
             Anchors = []
             Caption = '&Strikeout'
             TabOrder = 2
             ExplicitLeft = 233
-            ExplicitTop = 11
           end
           object chkUnderline: TCheckBox
-            Left = 338
-            Top = 10
+            Left = 339
+            Top = 11
             Width = 74
             Height = 17
             Anchors = []
             Caption = '&Underline'
             TabOrder = 3
-            ExplicitLeft = 339
-            ExplicitTop = 11
           end
         end
       end
@@ -502,6 +501,10 @@ object frmEditorOptions: TfrmEditorOptions
     object tabGutter: TTabSheet
       Caption = 'Gutter'
       ImageIndex = 4
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         456
         508)
@@ -724,6 +727,10 @@ object frmEditorOptions: TfrmEditorOptions
       Margins.Bottom = 4
       Caption = 'Behaviour'
       ImageIndex = 1
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         456
         508)
@@ -744,6 +751,10 @@ object frmEditorOptions: TfrmEditorOptions
       Caption = '&Commands'
       ImageIndex = 3
       TabVisible = False
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         456
         508)
@@ -779,6 +790,10 @@ object frmEditorOptions: TfrmEditorOptions
       Margins.Bottom = 4
       Caption = 'Syntax Highlighting'
       ImageIndex = 2
+      ExplicitLeft = 0
+      ExplicitTop = 0
+      ExplicitWidth = 0
+      ExplicitHeight = 0
       DesignSize = (
         456
         508)
