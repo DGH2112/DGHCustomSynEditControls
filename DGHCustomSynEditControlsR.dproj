@@ -108,6 +108,8 @@
         <DCCReference Include="Source\SynHighlighterBNF.pas"/>
         <DCCReference Include="Source\SynHighlighterMD.pas"/>
         <DCCReference Include="Source\SynHighlighterRegEx.pas"/>
+        <None Include="License.md"/>
+        <None Include="Readme.md"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -156,7 +158,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Bpl\DGHCustomSynEditControlsRXE102.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\..\Bpl\DGHCustomSynEditControlsRXE102.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DGHCustomSynEditControlsR.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

@@ -5,9 +5,7 @@
 
   @Version 1.0
   @Author  David Hoyle
-  @Date    05 Nov 2018
-
-  @todo Add Key Commands
+  @Date    11 Nov 2018
 
 **)
 Unit SynEditOptionsForm;
@@ -184,6 +182,21 @@ Type
     lblGutterWidth: TLabel;
     gpnlFontStyles: TGridPanel;
     lvKeyStrokes: TListView;
+    chkShowGutter: TCheckBox;
+    chkUseEditorFont: TCheckBox;
+    cbxGutterFontName: TComboBox;
+    gbxGutterFontStyle: TGroupBox;
+    gpnlGutterFontStyles: TGridPanel;
+    chkGutterFontBold: TCheckBox;
+    chkGutterFontItalic: TCheckBox;
+    chkGutterFontUnderline: TCheckBox;
+    chkGutterFontStrikeout: TCheckBox;
+    cbxGutterFontColour: TColorBox;
+    udGutterFontSize: TUpDown;
+    edtGutterFontSize: TEdit;
+    lblGutterFontName: TLabel;
+    lblGutterFontSize: TLabel;
+    lblGutterFontColour: TLabel;
     Procedure lbAttributesClick(Sender: TObject);
     Procedure AttributeChange(Sender: TObject);
     procedure lbAttributesDrawItem(Sender: TWinControl; Index: Integer; Rect: TRect;
@@ -325,6 +338,7 @@ Constructor TAttribute.Create(Const Name: String; Const Fore, Back: TColor;
   Const Parent : TSynCustomHighlighter);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod(Self, 'Create', tmoTiming);{$ENDIF}
   FName       := Name;
   FForeColour := Fore;
   FBackColour := Back;
@@ -349,6 +363,7 @@ Function TAttributes.Add(Const Attr : TSynHighlighterAttributes;
   Const Parent : TSynCustomHighlighter) : TAttribute;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TAttributes.Add', tmoTiming);{$ENDIF}
   Result := Nil;
   If FProcessedAttrs.IndexOf(Attr) = -1 Then  // Only add it not already in list
     Begin
@@ -370,6 +385,7 @@ End;
 Constructor TAttributes.Create;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TAttributes.Create', tmoTiming);{$ENDIF}
   FAttributes := TObjectList.Create(True);
   FProcessedAttrs := TList.Create;
 End;
@@ -385,6 +401,7 @@ End;
 Destructor TAttributes.Destroy;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TAttributes.Destroy', tmoTiming);{$ENDIF}
   FProcessedAttrs.Free;
   FAttributes.Free;
   Inherited Destroy;
@@ -407,6 +424,7 @@ Var
   A: TAttribute;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TAttributes.Update', tmoTiming);{$ENDIF}
   For i := 0 To FAttributes.Count - 1 Do
     Begin
       A := FAttributes[i] As TAttribute;
@@ -436,6 +454,7 @@ Var
   i : Integer;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.AddHighlighter', tmoTiming);{$ENDIF}
   strName := Highlighter.FriendlyLanguageName;
   For i := 0 To Highlighter.AttrCount - 1 Do
     Begin
@@ -473,6 +492,7 @@ Procedure TfrmEditorOptions.AttributeChange(Sender: TObject);
   Procedure UpdateStyle(Const A : TAttribute; Const eStyle : TFontStyle; Const boolInclude : Boolean);
 
   Begin
+    {$IFDEF CODESITE}CodeSite.TraceMethod('UpdateStyle', tmoTiming);{$ENDIF}
     If boolInclude Then
       A.Style := A.Style + [eStyle];
   End;
@@ -481,6 +501,7 @@ Var
   A : TAttribute;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.AttributeChange', tmoTiming);{$ENDIF}
   If lbAttributes.ItemIndex > -1 Then
     If Not FUpdating Then
       Begin
@@ -517,14 +538,15 @@ Var
   FontInfo : TLogFont;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.Create', tmoTiming);{$ENDIF}
   Inherited Create(AOwner);
   FAttributes := TAttributes.Create;
   FontInfo.lfCharSet := DEFAULT_CHARSET;
   FontInfo.lfFaceName := '';
   FontInfo.lfPitchAndFamily := FIXED_PITCH;
   FontNames := cbxFontName;
-  EnumFontFamiliesEx(Canvas.Handle, FontInfo, @FontEnumExProc, 0,
-    Integer(cbxFontName));
+  EnumFontFamiliesEx(Canvas.Handle, FontInfo, @FontEnumExProc, 0, Integer(cbxFontName));
+  cbxGutterFontName.Items.Assign(cbxFontName.Items);
   For j := Low(TSynEditorOption) To High(TSynEditorOption) Do
     clbOptions.Items.Add(BehaviouralOptions[j].Description);
 End;
@@ -540,6 +562,7 @@ End;
 Destructor TfrmEditorOptions.Destroy;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.Destroy', tmoTiming);{$ENDIF}
   FAttributes.Free;
   Inherited Destroy;
 End;
@@ -564,6 +587,7 @@ Var
   F: TfrmEditorOptions;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.Execute', tmoTiming);{$ENDIF}
   Result := False;
   F := TfrmEditorOptions.Create(OwnerForm);
   Try
@@ -594,6 +618,7 @@ Var
   i : TSynEditorOption;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.FinaliseBehaviour', tmoTiming);{$ENDIF}
   For i := Low(TSynEditorOption) To High(TSynEditorOption) Do
     If clbOptions.Checked[Integer(i)] Then
       Editor.Options := Editor.Options + [i]
@@ -616,6 +641,7 @@ End;
 Procedure TfrmEditorOptions.FinaliseDlg(Const Editor: TSynEdit; Const boolIncTag: Boolean);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.FinaliseDlg', tmoTiming);{$ENDIF}
   FinaliseEditor(Editor);
   FinaliseGutter(Editor);
   FinaliseBehaviour(Editor);
@@ -635,6 +661,7 @@ End;
 Procedure TfrmEditorOptions.FinaliseEditor(Const Editor: TSynEdit);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.FinaliseEditor', tmoTiming);{$ENDIF}
   Editor.TabWidth := udTabWidth.Position;
   Editor.Color := cbxEditorBackgroundColour.Selected;
   Editor.ActiveLineColor := cbxActiveLineColour.Selected;
@@ -672,7 +699,21 @@ End;
 Procedure TfrmEditorOptions.FinaliseGutter(Const Editor: TSynEdit);
 
 Begin
-  Editor.Gutter.Font.Assign(Editor.Font);
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.FinaliseGutter', tmoTiming);{$ENDIF}
+  Editor.Gutter.Visible := chkShowGutter.Checked;
+  Editor.Gutter.UseFontStyle := Not chkUseEditorFont.Checked;
+  Editor.Gutter.Font.Name := cbxGutterFontName.Text;
+  Editor.Gutter.Font.Size := udGutterFontSize.Position;
+  Editor.Gutter.Font.Color := cbxGutterFontColour.Selected;
+  Editor.Gutter.Font.Style := [];
+  If chkGutterFontBold.Checked Then
+    Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsBold];
+  If chkGutterFontItalic.Checked Then
+    Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsItalic];
+  If chkGutterFontUnderline.Checked Then
+    Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsUnderline];
+  If chkGutterFontStrikeout.Checked Then
+    Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsStrikeout];
   Editor.Gutter.AutoSize := chkAutoSize.Checked;
   Editor.Gutter.ShowModification := chkShowModifications.Checked;
   Editor.Gutter.ShowLineNumbers := chxLineNumbers.Checked;
@@ -696,6 +737,7 @@ End;
 Procedure TfrmEditorOptions.FinaliseHighlighter(Const boolIncTag : Boolean);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.FinaliseHighlighter', tmoTiming);{$ENDIF}
   FAttributes.Update(boolIncTag);
 End;
 
@@ -716,6 +758,7 @@ Var
   i: TSynEditorOption;
   
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.InitialiseBehaviour', tmoTiming);{$ENDIF}
   For i := Low(TSynEditorOption) To High(TSynEditorOption) Do
     clbOptions.Checked[Integer(i)] := i In Editor.Options;
 End;
@@ -733,6 +776,7 @@ End;
 Procedure TfrmEditorOptions.InitialiseDlg(Const Editor: TSynEdit);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.InitialiseDlg', tmoTiming);{$ENDIF}
   InitialiseEditor(Editor);
   InitialiseGutter(Editor);
   InitialiseBehaviour(Editor);
@@ -760,6 +804,7 @@ End;
 Procedure TfrmEditorOptions.InitialiseEditor(Const Editor: TSynEdit);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.InitialiseEditor', tmoTiming);{$ENDIF}
   udTabWidth.Position := Editor.TabWidth;
   cbxEditorBackgroundColour.Selected := Editor.Color;
   cbxActiveLineColour.Selected := Editor.ActiveLineColor;
@@ -794,6 +839,16 @@ End;
 Procedure TfrmEditorOptions.InitialiseGutter(Const Editor: TSynEdit);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.InitialiseGutter', tmoTiming);{$ENDIF}
+  chkShowGutter.Checked := Editor.Gutter.Visible;
+  chkUseEditorFont.Checked := Not Editor.Gutter.UseFontStyle;
+  cbxGutterFontName.ItemIndex := cbxGutterFontName.Items.IndexOf(Editor.Gutter.Font.Name);
+  udGutterFontSize.Position := Editor.Gutter.Font.Size;
+  cbxGutterFontColour.Selected := Editor.Gutter.Font.Color;
+  chkGutterFontBold.Checked := fsBold In Editor.Gutter.Font.Style;
+  chkGutterFontItalic.Checked := fsItalic In Editor.Gutter.Font.Style;
+  chkGutterFontUnderline.Checked := fsUnderline In Editor.Gutter.Font.Style;
+  chkGutterFontStrikeout.Checked := fsStrikeout In Editor.Gutter.Font.Style;
   chkAutoSize.Checked := Editor.Gutter.AutoSize;
   chkShowModifications.Checked := Editor.Gutter.ShowModification;
   chxLineNumbers.Checked := Editor.Gutter.ShowLineNumbers;
@@ -827,6 +882,7 @@ Var
   A: TAttribute;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.InitialiseHighlighter', tmoTiming);{$ENDIF}
   If Assigned(Editor.Highlighter) Then
     Begin
       If Editor.Highlighter Is TSynMultiSyn Then
@@ -870,6 +926,7 @@ Var
   A : TAttribute;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.lbAttributesClick', tmoTiming);{$ENDIF}
   If lbAttributes.ItemIndex > -1 Then
     Begin
       A := lbAttributes.Items.Objects[lbAttributes.ItemIndex] As TAttribute;
@@ -912,6 +969,7 @@ Var
   A: TAttribute;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.lbAttributesDrawItem', tmoTiming);{$ENDIF}
   lbAttributes.Canvas.FillRect(Rect);
   strText := lbAttributes.Items[Index];
   R := Rect;
@@ -930,3 +988,4 @@ Begin
 End;
 
 End.
+

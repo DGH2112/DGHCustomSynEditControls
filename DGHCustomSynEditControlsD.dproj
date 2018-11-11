@@ -120,6 +120,8 @@
         <RcCompile Include="DGHCustomSynEditControlsSplashScreen.rc">
             <Form>New1.res</Form>
         </RcCompile>
+        <None Include="License.md"/>
+        <None Include="Readme.md"/>
         <BuildConfiguration Include="Release">
             <Key>Cfg_2</Key>
             <CfgParent>Base</CfgParent>
@@ -168,7 +170,7 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="..\..\Bpl\DGHCustomSynEditControlsD.bpl" Configuration="Debug" Class="ProjectOutput">
+                <DeployFile LocalName="..\..\..\Bpl\DGHCustomSynEditControlsDXE102.bpl" Configuration="Debug" Class="ProjectOutput">
                     <Platform Name="Win32">
                         <RemoteName>DGHCustomSynEditControlsD.bpl</RemoteName>
                         <Overwrite>true</Overwrite>

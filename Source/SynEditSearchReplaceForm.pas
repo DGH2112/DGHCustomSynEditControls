@@ -5,7 +5,7 @@
 
  @Version 1.0
  @Author  David Hoyle
- @Date    26 Jan 2018
+ @Date    07 Nov 2018
 
  **)
 Unit SynEditSearchReplaceForm;
@@ -88,6 +88,9 @@ Procedure SearchReplaceText(Const Editor: TCustomSynEdit; Const ASearch, AReplac
 Implementation
 
 Uses
+  {$IFDEF DEBUG}
+  CodeSiteLogging,
+  {$ENDIF}
   System.UITypes,
   System.Math,
   SynEditConfirmationDlgForm;
@@ -150,6 +153,7 @@ Var
   Procedure UpdateOptions(Const boolInclude: Boolean; Const Op: TSynSearchOption);
 
   Begin
+    {$IFDEF CODESITE}CodeSite.TraceMethod('UpdateOptions', tmoTiming);{$ENDIF}
     If boolInclude Then
       Include(SynEditOps, Op)
     Else
@@ -157,6 +161,7 @@ Var
   End;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('DoSearchReplaceText', tmoTiming);{$ENDIF}
   If soRegEx In Options Then
     Editor.SearchEngine := RegEng
   Else
@@ -192,7 +197,7 @@ End;
   @param   Options    as a TSearchOptions as a reference
   @param   RegEng     as a TSynEditSearchCustom as a constant
   @param   StdEng     as a TSynEditSearchCustom as a constant
-  @param   strRootKey as a String as a constant
+  @param   IniFile    as a TMemIniFile as a constant
 
 **)
 Procedure SearchFind(Const AOwner : TForm; Const Editor: TCustomSynEdit;
@@ -200,6 +205,7 @@ Procedure SearchFind(Const AOwner : TForm; Const Editor: TCustomSynEdit;
   Const RegEng, StdEng: TSynEditSearchCustom; Const IniFile : TMemIniFile);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('SearchFind', tmoTiming);{$ENDIF}
   Exclude(Options, soReplaceDlg);
   Exclude(Options, soReplaceAll);
   Exclude(Options, soPrompt);
@@ -238,6 +244,7 @@ Procedure SearchFindNext(Const Editor: TCustomSynEdit; Const MsgHandler: TSearch
   Const RegEng, StdEng: TSynEditSearchCustom);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('SearchFindNext', tmoTiming);{$ENDIF}
   DoSearchReplaceText(Editor, MsgHandler, strFind, strReplace, Options, RegEng,
     StdEng, True);
 End;
@@ -258,7 +265,7 @@ End;
   @param   Options    as a TSearchOptions as a reference
   @param   RegEng     as a TSynEditSearchCustom as a constant
   @param   StdEng     as a TSynEditSearchCustom as a constant
-  @param   strRootKey as a String as a constant
+  @param   INIFile    as a TMemIniFile as a constant
 
 **)
 Procedure SearchReplace(Const AOwner : TForm; Const Editor: TCustomSynEdit;
@@ -266,6 +273,7 @@ Procedure SearchReplace(Const AOwner : TForm; Const Editor: TCustomSynEdit;
   Const RegEng, StdEng: TSynEditSearchCustom; Const INIFile : TMemIniFile);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('SearchReplace', tmoTiming);{$ENDIF}
   Include(Options, soReplaceDlg);
   Include(Options, soReplaceAll);
   Include(Options, soPrompt);
@@ -306,6 +314,7 @@ Var
   R: TRect;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('SearchReplaceText', tmoTiming);{$ENDIF}
   If ASearch = AReplace Then
     Action := raSkip
   Else
@@ -356,6 +365,7 @@ Procedure TfrmSearchAndReplace.btnOKClick(Sender: TObject);
     i: Integer;
 
   Begin
+    {$IFDEF CODESITE}CodeSite.TraceMethod(Self, 'btnOKClick/CanAdd', tmoTiming);{$ENDIF}
     Result := False;
     If strText = '' Then
       Exit;
@@ -366,6 +376,7 @@ Procedure TfrmSearchAndReplace.btnOKClick(Sender: TObject);
   End;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod(Self, 'btnOKClick', tmoTiming);{$ENDIF}
   If CanAdd(cbxSearch.Text, cbxSearch) Then
     cbxSearch.Items.Insert(0, cbxSearch.Text);
   If CanAdd(cbxReplace.Text, cbxReplace) Then
@@ -380,13 +391,14 @@ End;
            stored.
   @postcon Constructs an instance of the class.
 
-  @param   AOwner     as a TComponent as a constant
-  @param   strRootKey as a String as a constant
+  @param   AOwner  as a TComponent as a constant
+  @param   INIFile as a TMemIniFile as a constant
 
 **)
 Constructor TfrmSearchAndReplace.CreateDlg(Const AOwner: TComponent; Const INIFile : TMemIniFile);
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod(Self, 'CreateDlg', tmoTiming);{$ENDIF}
   Inherited Create(AOwner);
   FINIFile := INIFile;
 End;
@@ -403,7 +415,7 @@ End;
   @param   strSearch  as a String as a reference
   @param   strReplace as a String as a reference
   @param   Options    as a TSearchOptions as a reference
-  @param   strRootKey as a String as a constant
+  @param   INIFile    as a TMemIniFile as a constant
   @return  a Boolean
 
 **)
@@ -424,6 +436,7 @@ Class Function TfrmSearchAndReplace.Execute(Const AOwner : Tform; Var strSearch,
   Procedure UpdateOption(Const boolInclude: Boolean; Const Option: TSearchOption);
 
   Begin
+    {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmSearchAndReplace.Execute/UpdateOption', tmoTiming);{$ENDIF}
     If boolInclude Then
       Include(Options, Option)
     Else
@@ -439,6 +452,7 @@ Var
   F: TfrmSearchAndReplace;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmSearchAndReplace.Execute', tmoTiming);{$ENDIF}
   Result := False;
   F := TfrmSearchAndReplace.CreateDlg(AOwner, INIFile);
   Try
@@ -500,6 +514,7 @@ Var
   i : Integer;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod(Self, 'FormCreate', tmoTiming);{$ENDIF}
   sl := TStringList.Create;
   Try
     FINIFile.ReadSection(strSearchAndReplaceSearchStrings, sl);
@@ -538,6 +553,7 @@ Var
   i: Integer;
 
 Begin
+  {$IFDEF CODESITE}CodeSite.TraceMethod(Self, 'FormDestroy', tmoTiming);{$ENDIF}
   If ModalResult In [mrOK, mrAll] Then
     Begin
       For i := 0 To cbxSearch.Items.Count - 1 Do
@@ -555,3 +571,4 @@ Begin
 End;
 
 End.
+
