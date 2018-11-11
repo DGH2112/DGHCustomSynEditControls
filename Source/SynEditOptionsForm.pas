@@ -5,9 +5,7 @@
 
   @Version 1.0
   @Author  David Hoyle
-  @Date    07 Nov 2018
-
-  @todo Add Key Commands
+  @Date    11 Nov 2018
 
 **)
 Unit SynEditOptionsForm;
@@ -184,6 +182,21 @@ Type
     lblGutterWidth: TLabel;
     gpnlFontStyles: TGridPanel;
     lvKeyStrokes: TListView;
+    chkShowGutter: TCheckBox;
+    chkUseEditorFont: TCheckBox;
+    cbxGutterFontName: TComboBox;
+    gbxGutterFontStyle: TGroupBox;
+    gpnlGutterFontStyles: TGridPanel;
+    chkGutterFontBold: TCheckBox;
+    chkGutterFontItalic: TCheckBox;
+    chkGutterFontUnderline: TCheckBox;
+    chkGutterFontStrikeout: TCheckBox;
+    cbxGutterFontColour: TColorBox;
+    udGutterFontSize: TUpDown;
+    edtGutterFontSize: TEdit;
+    lblGutterFontName: TLabel;
+    lblGutterFontSize: TLabel;
+    lblGutterFontColour: TLabel;
     Procedure lbAttributesClick(Sender: TObject);
     Procedure AttributeChange(Sender: TObject);
     procedure lbAttributesDrawItem(Sender: TWinControl; Index: Integer; Rect: TRect;
@@ -532,8 +545,8 @@ Begin
   FontInfo.lfFaceName := '';
   FontInfo.lfPitchAndFamily := FIXED_PITCH;
   FontNames := cbxFontName;
-  EnumFontFamiliesEx(Canvas.Handle, FontInfo, @FontEnumExProc, 0,
-    Integer(cbxFontName));
+  EnumFontFamiliesEx(Canvas.Handle, FontInfo, @FontEnumExProc, 0, Integer(cbxFontName));
+  cbxGutterFontName.Items.Assign(cbxFontName.Items);
   For j := Low(TSynEditorOption) To High(TSynEditorOption) Do
     clbOptions.Items.Add(BehaviouralOptions[j].Description);
 End;
@@ -687,7 +700,20 @@ Procedure TfrmEditorOptions.FinaliseGutter(Const Editor: TSynEdit);
 
 Begin
   {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.FinaliseGutter', tmoTiming);{$ENDIF}
-  Editor.Gutter.Font.Assign(Editor.Font);
+  Editor.Gutter.Visible := chkShowGutter.Checked;
+  Editor.Gutter.UseFontStyle := Not chkUseEditorFont.Checked;
+  Editor.Gutter.Font.Name := cbxGutterFontName.Text;
+  Editor.Gutter.Font.Size := udGutterFontSize.Position;
+  Editor.Gutter.Font.Color := cbxGutterFontColour.Selected;
+  Editor.Gutter.Font.Style := [];
+  If chkGutterFontBold.Checked Then
+    Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsBold];
+  If chkGutterFontItalic.Checked Then
+    Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsItalic];
+  If chkGutterFontUnderline.Checked Then
+    Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsUnderline];
+  If chkGutterFontStrikeout.Checked Then
+    Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsStrikeout];
   Editor.Gutter.AutoSize := chkAutoSize.Checked;
   Editor.Gutter.ShowModification := chkShowModifications.Checked;
   Editor.Gutter.ShowLineNumbers := chxLineNumbers.Checked;
@@ -814,6 +840,15 @@ Procedure TfrmEditorOptions.InitialiseGutter(Const Editor: TSynEdit);
 
 Begin
   {$IFDEF CODESITE}CodeSite.TraceMethod('TfrmEditorOptions.InitialiseGutter', tmoTiming);{$ENDIF}
+  chkShowGutter.Checked := Editor.Gutter.Visible;
+  chkUseEditorFont.Checked := Not Editor.Gutter.UseFontStyle;
+  cbxGutterFontName.ItemIndex := cbxGutterFontName.Items.IndexOf(Editor.Gutter.Font.Name);
+  udGutterFontSize.Position := Editor.Gutter.Font.Size;
+  cbxGutterFontColour.Selected := Editor.Gutter.Font.Color;
+  chkGutterFontBold.Checked := fsBold In Editor.Gutter.Font.Style;
+  chkGutterFontItalic.Checked := fsItalic In Editor.Gutter.Font.Style;
+  chkGutterFontUnderline.Checked := fsUnderline In Editor.Gutter.Font.Style;
+  chkGutterFontStrikeout.Checked := fsStrikeout In Editor.Gutter.Font.Style;
   chkAutoSize.Checked := Editor.Gutter.AutoSize;
   chkShowModifications.Checked := Editor.Gutter.ShowModification;
   chxLineNumbers.Checked := Editor.Gutter.ShowLineNumbers;

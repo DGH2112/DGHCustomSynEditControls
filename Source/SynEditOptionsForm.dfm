@@ -29,7 +29,7 @@ object frmEditorOptions: TfrmEditorOptions
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = tabEditor
+    ActivePage = tabGutter
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
     object tabEditor: TTabSheet
@@ -38,10 +38,6 @@ object frmEditorOptions: TfrmEditorOptions
       Margins.Right = 4
       Margins.Bottom = 4
       Caption = 'Editor'
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         456
         508)
@@ -208,7 +204,7 @@ object frmEditorOptions: TfrmEditorOptions
       end
       object udEditorFontSize: TUpDown
         Left = 432
-        Top = 106
+        Top = 105
         Width = 20
         Height = 24
         Margins.Left = 4
@@ -331,7 +327,7 @@ object frmEditorOptions: TfrmEditorOptions
         TabOrder = 13
       end
       object chkWordWrap: TCheckBox
-        Left = 5
+        Left = 4
         Top = 470
         Width = 447
         Height = 21
@@ -339,6 +335,7 @@ object frmEditorOptions: TfrmEditorOptions
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Alignment = taLeftJustify
         Anchors = [akLeft, akTop, akRight]
         Caption = '&Word Wrap text in editor'
         TabOrder = 17
@@ -422,7 +419,6 @@ object frmEditorOptions: TfrmEditorOptions
             Anchors = []
             Caption = '&Bold'
             TabOrder = 0
-            ExplicitLeft = 19
           end
           object chkItalics: TCheckBox
             Left = 125
@@ -432,7 +428,6 @@ object frmEditorOptions: TfrmEditorOptions
             Anchors = []
             Caption = '&Italics'
             TabOrder = 1
-            ExplicitLeft = 126
           end
           object chkStrikeout: TCheckBox
             Left = 232
@@ -442,7 +437,6 @@ object frmEditorOptions: TfrmEditorOptions
             Anchors = []
             Caption = '&Strikeout'
             TabOrder = 2
-            ExplicitLeft = 233
           end
           object chkUnderline: TCheckBox
             Left = 339
@@ -456,14 +450,15 @@ object frmEditorOptions: TfrmEditorOptions
         end
       end
       object chkWantTabs: TCheckBox
-        Left = 5
+        Left = 4
         Top = 441
-        Width = 447
+        Width = 448
         Height = 21
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Alignment = taLeftJustify
         Anchors = [akLeft, akTop, akRight]
         Caption = '&Want Tabs'
         TabOrder = 16
@@ -501,16 +496,14 @@ object frmEditorOptions: TfrmEditorOptions
     object tabGutter: TTabSheet
       Caption = 'Gutter'
       ImageIndex = 4
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
+      ExplicitLeft = 36
+      ExplicitTop = 32
       DesignSize = (
         456
         508)
       object lblModifiedColour: TLabel
         Left = 4
-        Top = 186
+        Top = 361
         Width = 116
         Height = 16
         Margins.Left = 4
@@ -521,7 +514,7 @@ object frmEditorOptions: TfrmEditorOptions
       end
       object lblSavedColour: TLabel
         Left = 4
-        Top = 216
+        Top = 391
         Width = 103
         Height = 16
         Margins.Left = 4
@@ -531,8 +524,8 @@ object frmEditorOptions: TfrmEditorOptions
         FocusControl = cbxSavedColour
       end
       object lblModifiedBarWidth: TLabel
-        Left = 5
-        Top = 247
+        Left = 4
+        Top = 421
         Width = 135
         Height = 16
         Margins.Left = 4
@@ -543,7 +536,7 @@ object frmEditorOptions: TfrmEditorOptions
       end
       object lblGutterColour: TLabel
         Left = 4
-        Top = 68
+        Top = 272
         Width = 76
         Height = 16
         Margins.Left = 4
@@ -554,7 +547,7 @@ object frmEditorOptions: TfrmEditorOptions
       end
       object lblGutterBorderColour: TLabel
         Left = 4
-        Top = 98
+        Top = 302
         Width = 118
         Height = 16
         Margins.Left = 4
@@ -565,7 +558,7 @@ object frmEditorOptions: TfrmEditorOptions
       end
       object lblGutterWidth: TLabel
         Left = 4
-        Top = 37
+        Top = 240
         Width = 72
         Height = 16
         Margins.Left = 4
@@ -574,23 +567,57 @@ object frmEditorOptions: TfrmEditorOptions
         Caption = 'Gutter Width'
         FocusControl = edtGutterWidth
       end
+      object lblGutterFontName: TLabel
+        Left = 4
+        Top = 117
+        Width = 65
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Caption = 'Font &Colour'
+        FocusControl = cbxGutterFontColour
+      end
+      object lblGutterFontSize: TLabel
+        Left = 4
+        Top = 85
+        Width = 101
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Caption = 'Editor Font &Size'
+        FocusControl = edtGutterFontSize
+      end
+      object lblGutterFontColour: TLabel
+        Left = 4
+        Top = 53
+        Width = 117
+        Height = 16
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Caption = 'Editor Font &Name'
+        FocusControl = cbxGutterFontName
+      end
       object chxLineNumbers: TCheckBox
         Left = 4
-        Top = 302
-        Width = 447
+        Top = 450
+        Width = 448
         Height = 21
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Alignment = taLeftJustify
         Anchors = [akLeft, akTop, akRight]
         Caption = 'S&how Line Numbers in the Editor Gutter'
-        TabOrder = 10
+        TabOrder = 17
       end
       object chkAutoSize: TCheckBox
         Left = 4
-        Top = 4
-        Width = 447
+        Top = 208
+        Width = 448
         Height = 21
         Margins.Left = 4
         Margins.Top = 4
@@ -598,25 +625,26 @@ object frmEditorOptions: TfrmEditorOptions
         Margins.Bottom = 4
         Anchors = [akLeft, akTop, akRight]
         Caption = '&Auto Size Editor Gutter'
-        TabOrder = 0
+        TabOrder = 7
       end
       object chkShowModifications: TCheckBox
         Left = 4
-        Top = 125
-        Width = 447
+        Top = 329
+        Width = 448
         Height = 21
         Margins.Left = 4
         Margins.Top = 4
         Margins.Right = 4
         Margins.Bottom = 4
+        Alignment = taLeftJustify
         Anchors = [akLeft, akTop, akRight]
         Caption = 'S&how Line Modifications in the Editor Gutter'
-        TabOrder = 5
+        TabOrder = 12
       end
       object cbxModifiedColour: TColorBox
-        Left = 228
-        Top = 183
-        Width = 224
+        Left = 208
+        Top = 358
+        Width = 244
         Height = 22
         Margins.Left = 4
         Margins.Top = 4
@@ -624,12 +652,12 @@ object frmEditorOptions: TfrmEditorOptions
         Margins.Bottom = 4
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
         Anchors = [akTop, akRight]
-        TabOrder = 6
+        TabOrder = 13
       end
       object cbxSavedColour: TColorBox
-        Left = 228
-        Top = 213
-        Width = 224
+        Left = 208
+        Top = 388
+        Width = 244
         Height = 22
         Margins.Left = 4
         Margins.Top = 4
@@ -637,12 +665,12 @@ object frmEditorOptions: TfrmEditorOptions
         Margins.Bottom = 4
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
         Anchors = [akTop, akRight]
-        TabOrder = 7
+        TabOrder = 14
       end
       object upModifiedBarWidth: TUpDown
-        Left = 433
-        Top = 243
-        Width = 20
+        Left = 437
+        Top = 418
+        Width = 16
         Height = 24
         Margins.Left = 4
         Margins.Top = 4
@@ -651,12 +679,51 @@ object frmEditorOptions: TfrmEditorOptions
         Anchors = [akTop, akRight]
         Associate = edtModifiedBarWidth
         Max = 1024
-        TabOrder = 9
+        TabOrder = 16
       end
       object edtModifiedBarWidth: TEdit
-        Left = 228
-        Top = 243
-        Width = 205
+        Left = 208
+        Top = 418
+        Width = 229
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akTop, akRight]
+        TabOrder = 15
+        Text = '0'
+      end
+      object cbxGutterColour: TColorBox
+        Left = 208
+        Top = 269
+        Width = 244
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+        Anchors = [akTop, akRight]
+        TabOrder = 10
+      end
+      object cbxGutterBorderColour: TColorBox
+        Left = 208
+        Top = 299
+        Width = 244
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+        Anchors = [akTop, akRight]
+        TabOrder = 11
+      end
+      object edtGutterWidth: TEdit
+        Left = 208
+        Top = 237
+        Width = 229
         Height = 24
         Margins.Left = 4
         Margins.Top = 4
@@ -666,48 +733,9 @@ object frmEditorOptions: TfrmEditorOptions
         TabOrder = 8
         Text = '0'
       end
-      object cbxGutterColour: TColorBox
-        Left = 228
-        Top = 65
-        Width = 224
-        Height = 22
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
-        Anchors = [akTop, akRight]
-        TabOrder = 3
-      end
-      object cbxGutterBorderColour: TColorBox
-        Left = 228
-        Top = 95
-        Width = 224
-        Height = 22
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
-        Anchors = [akTop, akRight]
-        TabOrder = 4
-      end
-      object edtGutterWidth: TEdit
-        Left = 227
-        Top = 33
-        Width = 205
-        Height = 24
-        Margins.Left = 4
-        Margins.Top = 4
-        Margins.Right = 4
-        Margins.Bottom = 4
-        Anchors = [akTop, akRight]
-        TabOrder = 1
-        Text = '0'
-      end
       object udGutterWidth: TUpDown
-        Left = 432
-        Top = 33
+        Left = 437
+        Top = 237
         Width = 16
         Height = 24
         Margins.Left = 4
@@ -717,7 +745,189 @@ object frmEditorOptions: TfrmEditorOptions
         Anchors = [akTop, akRight]
         Associate = edtGutterWidth
         Max = 1024
+        TabOrder = 9
+      end
+      object chkShowGutter: TCheckBox
+        Left = 4
+        Top = 3
+        Width = 449
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akTop, akRight]
+        Caption = '&Show Gutter'
+        TabOrder = 0
+      end
+      object chkUseEditorFont: TCheckBox
+        Left = 4
+        Top = 26
+        Width = 449
+        Height = 17
+        Alignment = taLeftJustify
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Use Editor &Font'
+        TabOrder = 1
+      end
+      object cbxGutterFontName: TComboBox
+        Left = 208
+        Top = 50
+        Width = 245
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Style = csDropDownList
+        Anchors = [akTop, akRight]
+        Sorted = True
         TabOrder = 2
+      end
+      object gbxGutterFontStyle: TGroupBox
+        Left = 4
+        Top = 143
+        Width = 449
+        Height = 58
+        Anchors = [akLeft, akTop, akRight]
+        Caption = 'Font Style'
+        TabOrder = 6
+        object gpnlGutterFontStyles: TGridPanel
+          AlignWithMargins = True
+          Left = 5
+          Top = 21
+          Width = 439
+          Height = 32
+          Align = alClient
+          BevelOuter = bvNone
+          ColumnCollection = <
+            item
+              Value = 24.999999773201270000
+            end
+            item
+              Value = 24.999999773201280000
+            end
+            item
+              Value = 24.999999993075410000
+            end
+            item
+              Value = 25.000000460522050000
+            end>
+          ControlCollection = <
+            item
+              Column = 0
+              Control = chkGutterFontBold
+              Row = 0
+            end
+            item
+              Column = 1
+              Control = chkGutterFontItalic
+              Row = 0
+            end
+            item
+              Column = 2
+              Control = chkGutterFontUnderline
+              Row = 0
+            end
+            item
+              Column = 3
+              Control = chkGutterFontStrikeout
+              Row = 0
+            end>
+          RowCollection = <
+            item
+              Value = 100.000000000000000000
+            end>
+          TabOrder = 0
+          ExplicitWidth = 432
+          ExplicitHeight = 40
+          DesignSize = (
+            439
+            32)
+          object chkGutterFontBold: TCheckBox
+            Left = 19
+            Top = 7
+            Width = 71
+            Height = 17
+            Anchors = []
+            Caption = '&Bold'
+            TabOrder = 0
+            ExplicitLeft = 18
+            ExplicitTop = 11
+          end
+          object chkGutterFontItalic: TCheckBox
+            Left = 128
+            Top = 7
+            Width = 71
+            Height = 17
+            Anchors = []
+            Caption = '&Italics'
+            TabOrder = 1
+            ExplicitLeft = 125
+            ExplicitTop = 11
+          end
+          object chkGutterFontUnderline: TCheckBox
+            Left = 237
+            Top = 7
+            Width = 71
+            Height = 17
+            Anchors = []
+            Caption = '&Strikeout'
+            TabOrder = 2
+            ExplicitLeft = 232
+            ExplicitTop = 11
+          end
+          object chkGutterFontStrikeout: TCheckBox
+            Left = 346
+            Top = 7
+            Width = 74
+            Height = 17
+            Anchors = []
+            Caption = '&Underline'
+            TabOrder = 3
+            ExplicitLeft = 339
+            ExplicitTop = 11
+          end
+        end
+      end
+      object cbxGutterFontColour: TColorBox
+        Left = 208
+        Top = 114
+        Width = 245
+        Height = 22
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
+        Anchors = [akTop, akRight]
+        TabOrder = 5
+      end
+      object udGutterFontSize: TUpDown
+        Left = 437
+        Top = 82
+        Width = 16
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akTop, akRight]
+        Associate = edtGutterFontSize
+        Min = 6
+        Max = 72
+        Position = 6
+        TabOrder = 4
+      end
+      object edtGutterFontSize: TEdit
+        Left = 208
+        Top = 82
+        Width = 229
+        Height = 24
+        Margins.Left = 4
+        Margins.Top = 4
+        Margins.Right = 4
+        Margins.Bottom = 4
+        Anchors = [akTop, akRight]
+        TabOrder = 3
+        Text = '6'
       end
     end
     object tabBehaviour: TTabSheet
@@ -727,10 +937,6 @@ object frmEditorOptions: TfrmEditorOptions
       Margins.Bottom = 4
       Caption = 'Behaviour'
       ImageIndex = 1
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         456
         508)
@@ -751,10 +957,6 @@ object frmEditorOptions: TfrmEditorOptions
       Caption = '&Commands'
       ImageIndex = 3
       TabVisible = False
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         456
         508)
@@ -790,10 +992,6 @@ object frmEditorOptions: TfrmEditorOptions
       Margins.Bottom = 4
       Caption = 'Syntax Highlighting'
       ImageIndex = 2
-      ExplicitLeft = 0
-      ExplicitTop = 0
-      ExplicitWidth = 0
-      ExplicitHeight = 0
       DesignSize = (
         456
         508)

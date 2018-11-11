@@ -5,7 +5,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    07 Nov 2018
+  @Date    11 Nov 2018
   
 **)
 Unit SynHighlighterUtils;
@@ -46,8 +46,10 @@ Uses
   CodeSiteLogging,
   {$ENDIF}
   System.SysUtils,
+  System.Classes,
   System.TypInfo,
   System.StrUtils,
+  System.UITypes,
   VCL.Controls,
   VCL.Graphics,
   SynHighlighterMulti;
@@ -69,6 +71,18 @@ Const
   strFontKey = 'Font.';
   (** A constant for the INI Key for the Editor Wordwrap **)
   strWordwrapKey = 'Wordwrap';
+  (** A constant for the INI Key for the editor GUtter visibility **)
+  strShowGutter = 'Show Gutter';
+  (** A constant for the INI Key for the Editor Gutter Font Name **)
+  strGutterFontNameKey = 'Gutter Font Name';
+  (** A constant for the INI Key for the Editor Gutter Font Size **)
+  strGutterFontSizeKey = 'Gutter Font Size';
+  (** A constant for the INI Key for the Editor Gutter Font Colour **)
+  strGutterFontColourKey = 'Gutter Font Colour';
+  (** A constant for the INI Key for the Editor Gutter Font Style **)
+  strGutterFontKey = 'Gutter Font.';
+  (** A constant for whether the gutter uses the Editor Font or not. **)
+  strUseEditorFontKey = 'UseEditorFont';
   (** A constant for the INI Key for the Editor Gutter Autosize **)
   strAutoSizeKey = 'AutoSize';
   (** A constant for the INI Key for the Editor Gutter Width **)
@@ -109,6 +123,10 @@ Const
   strForegroundKey = '.Foreground';
   (** A constant for the INI Key for the Editor Attribute Font Style **)
   strStyleKey = '.Style';
+  (** A constant for the default font size for the Editor and its gutter. **)
+  iDefaultFontSize = 11;
+  (** A constant to define the default editor font name and gutter font name. **)
+  strDefaultFontName = 'Consolas';
 
 (**
 
@@ -160,8 +178,6 @@ Class Procedure TDGHCustomSynEditFunctions.LoadEditorSettings(Const INIFile: TMe
   Const strIniSection: String; Const Editor: TSynEdit);
 
 Const
-  iDefaultFonrSize = 11;
-  strDefaultFontName = 'Consolas';
   iDefaultRightMargin = 80;
   iDefaultSpacePerTab = 2;
   iDefaultMaxScrollWidth = 8192;
@@ -180,7 +196,7 @@ Begin
   Editor.ActiveLineColor := StringToColor(INIFile.ReadString(strIniSection, strActiveLineColourKey,
     ColorToString(clSkyBlue)));
   Editor.Font.Name := INIFile.ReadString(strIniSection, strFontNameKey, strDefaultFontName);
-  Editor.Font.Size := INIFile.ReadInteger(strIniSection, strFontSizeKey, iDefaultFonrSize);
+  Editor.Font.Size := INIFile.ReadInteger(strIniSection, strFontSizeKey, iDefaultFontSize);
   Editor.Font.Color := StringToColor(INIFile.ReadString(strIniSection, strFontColourKey,
     ColorToString(clWindowText)));
   For eStyle := fsBold To fsStrikeOut Do
@@ -230,7 +246,6 @@ Begin
     strDefaultHighlightName);
   LoadEditorSettings(INIFile, strIniSection, Editor);
   LoadGutterSettings(INIFile, strIniSection, Editor);
-  Editor.Gutter.Font.Assign(Editor.Font);
   LoadHighlighterFromINIFile(INIFile, Editor.Highlighter);
 End;
 
@@ -253,8 +268,21 @@ Const
   iDefaultGutterWidth = 30;
   iDefaultModificationBarWidth = 4;
 
+Var
+  eStyle : TFontStyle;
+
 Begin
   {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.LoadGutterSettings', tmoTiming);{$ENDIF}
+  Editor.Gutter.Visible := INIFile.ReadBool(strIniSection, strShowGutter, True);
+  Editor.Gutter.UseFontStyle := Not INIFile.ReadBool(strIniSection, strUseEditorFontKey, True);
+  Editor.Gutter.Font.Name := INIFile.ReadString(strIniSection, strGutterFontNameKey, strDefaultFontName);
+  Editor.Gutter.Font.Size := INIFile.ReadInteger(strIniSection, strGutterFontSizeKey, iDefaultFontSize);
+  Editor.Gutter.Font.Color := StringToColor(INIFile.ReadString(strIniSection, strGutterFontColourKey,
+    ColorToString(clWindowText)));
+  For eStyle := fsBold To fsStrikeOut Do
+    If INIFile.ReadBool(strIniSection, strGutterFontKey + GetEnumName(TypeInfo(TFontStyle), Ord(eStyle)),
+      False) Then
+      Editor.Font.Style := Editor.Font.Style +  [eStyle];
   Editor.Gutter.AutoSize := INIFile.ReadBool(strIniSection, strAutoSizeKey, False);
   Editor.Gutter.Width := INIFile.ReadInteger(strIniSection, strGutterWidthKey, iDefaultGutterWidth);
   Editor.Gutter.Color := StringToColor(INIFile.ReadString(strIniSection, strGutterColourKey,
@@ -405,8 +433,19 @@ End;
 Class Procedure TDGHCustomSynEditFunctions.SaveGutterSettings(Const INIFile: TMemIniFile;
   Const strIniSection: String; Const Editor: TSynEdit);
 
+Var
+  eStyle: TFontStyle;
+
 Begin
   {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.SaveGutterSettings', tmoTiming);{$ENDIF}
+  INIFile.WriteBool(strIniSection, strShowGutter, Editor.Gutter.Visible);
+  INIFile.WriteBool(strIniSection, strUseEditorFontKey, Not Editor.Gutter.UseFontStyle);
+  INIFile.WriteString(strIniSection, strGutterFontNameKey, Editor.Gutter.Font.Name);
+  INIFile.WriteInteger(strIniSection, strGutterFontSizeKey, Editor.Gutter.Font.Size);
+  INIFile.WriteString(strIniSection, strGutterFontColourKey, ColorToString(Editor.Gutter.Font.Color));
+  For eStyle := fsBold To fsStrikeOut Do
+    INIFile.WriteBool(strIniSection, strGutterFontKey + GetEnumName(TypeInfo(TFontStyle), Ord(eStyle)),
+      eStyle In Editor.Gutter.Font.Style);
   INIFile.WriteBool(strIniSection, strAutoSizeKey, Editor.Gutter.AutoSize);
   INIFile.WriteInteger(strIniSection, strGutterWidthKey, Editor.Gutter.Width);
   INIFile.WriteString(strIniSection, strGutterColourKey, ColorToString(Editor.Gutter.Color));
