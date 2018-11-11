@@ -3,9 +3,9 @@
 
 Author:  David Hoyle
 
-Version: 0.9
+Version: 0.9.1
 
-Date:    06 Nov 2018
+Date:    11 Nov 2018
 
 The code contain in the project can be used as an aid to learning and used to compile the project for
 your personal use. The code can be modified for your personel use however you should retain the headers
@@ -19,7 +19,7 @@ commercial product with out the author's consent.
 
 regards
 
-David Hoyle (c) 06 Nov 2018
+David Hoyle (c) 11 Nov 2018
 
 davidghoyle@gmail.com
 
