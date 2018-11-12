@@ -4,7 +4,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    05 Nov 2018
+  @Date    12 Nov 2018
   
 **)
 Unit DGHCustomSynEditControlsReg;
@@ -113,7 +113,7 @@ Var
 
 Begin
   {$IFDEF D2005}
-  If Supports(BorlandIDEServices, IOTASplashScreenServices, SSS) Then
+  If Supports(SplashScreenServices, IOTASplashScreenServices, SSS) Then
     Begin
       BuildNumber(BuildInfo);
       bmSplashScreen := LoadBitmap(hInstance, strSplashScreenBitMap);
