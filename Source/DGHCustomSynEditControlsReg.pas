@@ -17,6 +17,8 @@ Interface
 
 Implementation
 
+{$R ..\DGHCustomSECompsITHVerInfo.Res}
+
 Uses
   ToolsAPI,
   System.SysUtils,
@@ -63,6 +65,10 @@ Var
   strBuffer : Array[0..MAX_PATH] Of Char;
 
 Begin
+  BuildInfo.FMajor := 0;
+  BuildInfo.FMinor := 0;
+  BuildInfo.FRelease := 0;
+  BuildInfo.FBuild := 0;
   GetModuleFilename(hInstance, strBuffer, MAX_PATH);
   VerInfoSize := GetFileVersionInfoSize(strBuffer, Dummy);
   If VerInfoSize <> 0 Then
