@@ -8,7 +8,7 @@ CompileWithBRCC32=0
 MajorVer=0
 MinorVer=9
 ReleaseVer=1
-BuildVer=116
+BuildVer=117
 ResourceName=DGHCustomSECompsITHVerInfo
 WarnBefore=0
 WarnAfter=0
@@ -17,7 +17,7 @@ SaveModifiedFilesBeforeZipping=1
 [VersionInfo]
 CompanyName=Season's Fall Music
 FileDescription=A set of custom SynEdit components (Highlighters and Dialogues)
-FileVersion=0.9.1.116
+FileVersion=0.9.1.117
 InternalName=DGHCustomSynEditComponents
 LegalCopyright=Season's Fall Music
 LegalTrademarks=Season's Fall Music
