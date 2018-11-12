@@ -34,7 +34,8 @@ requires
   rtl,
   vcl,
   vclx,
-  SynEdit_R;
+  SynEdit_R,
+  vclimg;
 
 contains
   SynEditConfirmationDlgForm in 'Source\SynEditConfirmationDlgForm.pas' {frmConfirmationDlg},
