@@ -18,6 +18,7 @@ Interface
 Implementation
 
 {$R ..\DGHCustomSECompsITHVerInfo.Res}
+{$R ..\DGHCustomSynEditControlsSplashScreen.Res}
 
 Uses
   ToolsAPI,
@@ -101,37 +102,44 @@ ResourceString
   strSplashScreenName = 'DGH Custom SynEdit Components %d.%d%s for %s';
   {$IFDEF DEBUG}
   strSplashScreenBuild = 'Freeware Components by David Hoyle (DEBUG Build %d.%d.%d.%d)';
-  strDGHCustomSynEditControls = 'DGH Custom SynEdit Controls';
   {$ELSE}
   strSplashScreenBuild = 'Freeware Components by David Hoyle (Build %d.%d.%d.%d)';
   {$ENDIF}
+  strDGHCustomSynEditControls = 'DGH Custom SynEdit Controls';
 
 Const
   strRevision = ' abcdefghijklmnopqrstuvwxyz';
   strSplashScreenBitMap = 'SplashScreenBitMap24x24';
 
-{$IFDEF D2005}
 Var
   SSS : IOTASplashScreenServices;
   BuildInfo : TBuildInfo;
   bmSplashScreen : HBITMAP;
-{$ENDIF}
 
 Begin
-  {$IFDEF D2005}
   If Supports(SplashScreenServices, IOTASplashScreenServices, SSS) Then
     Begin
       BuildNumber(BuildInfo);
       bmSplashScreen := LoadBitmap(hInstance, strSplashScreenBitMap);
-      SSS.AddPluginBitmap(Format(strSplashScreenName, [BuildInfo.FMajor, BuildInfo.FMinor,
-        Copy(strRevision, BuildInfo.FRelease + 1, 1), Application.Title]), bmSplashScreen,
+      SSS.AddPluginBitmap(
+        Format(strSplashScreenName, [
+          BuildInfo.FMajor,
+          BuildInfo.FMinor,
+          strRevision[Succ(BuildInfo.FRelease)],
+          Application.Title]),
+        bmSplashScreen,
         {$IFDEF DEBUG} True {$ELSE} False {$ENDIF},
-        Format(strSplashScreenBuild, [BuildInfo.FMajor, BuildInfo.FMinor, BuildInfo.FRelease,
-          BuildInfo.FBuild]), ''
-        );
+        Format(strSplashScreenBuild, [
+          BuildInfo.FMajor,
+          BuildInfo.FMinor,
+          BuildInfo.FRelease,
+          BuildInfo.FBuild
+        ]),
+        ''
+      );
     End;
-  {$ENDIF}
   RegisterComponents(strDGHCustomSynEditControls, [TSynRegExSyn, TSynBNFSyn, TSynMDSyn]);
+  Sleep(10000);
 End;
 
 End.
