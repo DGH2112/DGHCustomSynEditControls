@@ -2,3 +2,15 @@
 WarnBefore=0
 WarnAfter=0
 
+[VersionInfo]
+CompanyName=
+FileDescription=
+FileVersion=1.0.0.0
+InternalName=
+LegalCopyright=
+LegalTrademarks=
+OriginalFilename=
+ProductName=
+ProductVersion=1.0
+Comments=
+
