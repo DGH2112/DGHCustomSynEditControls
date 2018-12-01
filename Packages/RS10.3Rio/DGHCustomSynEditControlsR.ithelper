@@ -1,0 +1,34 @@
+[Setup]
+IncBuild=1
+CopyVersionInfoFrom=
+ExcludedResExts=.dcr
+EnabledVersionInfo=1
+IncludeInProject=1
+CompileWithBRCC32=0
+MajorVer=0
+MinorVer=9
+ReleaseVer=1
+BuildVer=118
+ResourceName=DGHCustomSECompsITHVerInfo
+WarnBefore=0
+WarnAfter=0
+SaveModifiedFilesBeforeZipping=1
+
+[Zipping]
+Enabled=1
+ZipFile=D:\Documents\Web Page\Zips\DGHCustomSynEditControls.zip
+BasePath=D:\Documents\RAD Studio\
+ExclusionFiles=
+
+[VersionInfo]
+CompanyName=Season's Fall Music
+FileDescription=A set of custom SynEdit components (Highlighters and Dialogues)
+FileVersion=0.9.1.118
+InternalName=DGHCustomSynEditComponents
+LegalCopyright=Season's Fall Music
+LegalTrademarks=Season's Fall Music
+OriginalFilename=DGHCustomSynEditComponents
+ProductName=DGHCustomSynEditComponents
+ProductVersion=0.9a
+Comments=A set of custom SynEdit components (Highlighters and Dialogues)
+

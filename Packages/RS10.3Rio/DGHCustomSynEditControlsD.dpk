@@ -1,6 +1,17 @@
-package DGHCustomSynEditControlsXE101;
+(**
+  
+  This package contains a number of custom SynEdit Highlighters and other componenents (Options form,
+  Search and Replace Form and Confirmation dialogue).
+
+  @Author  David Hoyle
+  @Version 1.0
+  @Date    01 Dec 2018
+  
+**)
+Package DGHCustomSynEditControlsD;
 
 {$R *.res}
+{$R '..\..\DGHCustomSynEditHighlighters.dcr'}
 {$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
 {$ALIGN 8}
 {$ASSERTIONS ON}
@@ -25,15 +36,19 @@ package DGHCustomSynEditControlsXE101;
 {$IMAGEBASE $400000}
 {$DEFINE RELEASE}
 {$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'DGH Custom SynEdit Controls'}
+{$LIBSUFFIX 'XE103'}
+{$DESIGNONLY}
 {$IMPLICITBUILD ON}
 
 requires
   rtl,
   vcl,
-  SynEdit_R;
+  designide,
+  SynEdit_R,
+  DGHCustomSynEditControlsR;
 
 contains
-  SynHighlighterRegEx in 'Source\SynHighlighterRegEx.pas',
-  SynHighlighterBNF in 'Source\SynHighlighterBNF.pas';
+  DGHCustomSynEditControlsReg in '..\..\Source\DGHCustomSynEditControlsReg.pas';
 
-end.
+End.

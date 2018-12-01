@@ -4,7 +4,7 @@
 
   @Author  David Hoyle
   @Version 1.0
-  @Date    12 Nov 2018
+  @Date    01 Dec 2018
   
 **)
 Unit DGHCustomSynEditControlsReg;
@@ -99,7 +99,7 @@ End;
 Procedure Register;
 
 ResourceString
-  strSplashScreenName = 'DGH Custom SynEdit Components %d.%d%s for %s';
+  strSplashScreenName = 'DGH Custom SynEdit Components %d.%d%s';
   {$IFDEF DEBUG}
   strSplashScreenBuild = 'Freeware Components by David Hoyle (DEBUG Build %d.%d.%d.%d)';
   {$ELSE}
@@ -125,8 +125,8 @@ Begin
         Format(strSplashScreenName, [
           BuildInfo.FMajor,
           BuildInfo.FMinor,
-          strRevision[Succ(BuildInfo.FRelease)],
-          Application.Title]),
+          strRevision[Succ(BuildInfo.FRelease)]
+        ]),
         bmSplashScreen,
         {$IFDEF DEBUG} True {$ELSE} False {$ENDIF},
         Format(strSplashScreenBuild, [
@@ -139,7 +139,6 @@ Begin
       );
     End;
   RegisterComponents(strDGHCustomSynEditControls, [TSynRegExSyn, TSynBNFSyn, TSynMDSyn]);
-  Sleep(10000);
 End;
 
 End.

@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{3BCF8099-7540-4C3D-ACED-6AD401CC6033}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="DGHCustomSynEditControlsR.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="DGHCustomSynEditControlsD.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="DGHCustomSynEditControlsR">
+        <MSBuild Projects="DGHCustomSynEditControlsR.dproj"/>
+    </Target>
+    <Target Name="DGHCustomSynEditControlsR:Clean">
+        <MSBuild Projects="DGHCustomSynEditControlsR.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DGHCustomSynEditControlsR:Make">
+        <MSBuild Projects="DGHCustomSynEditControlsR.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="DGHCustomSynEditControlsD">
+        <MSBuild Projects="DGHCustomSynEditControlsD.dproj"/>
+    </Target>
+    <Target Name="DGHCustomSynEditControlsD:Clean">
+        <MSBuild Projects="DGHCustomSynEditControlsD.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="DGHCustomSynEditControlsD:Make">
+        <MSBuild Projects="DGHCustomSynEditControlsD.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="DGHCustomSynEditControlsR;DGHCustomSynEditControlsD"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="DGHCustomSynEditControlsR:Clean;DGHCustomSynEditControlsD:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="DGHCustomSynEditControlsR:Make;DGHCustomSynEditControlsD:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>
