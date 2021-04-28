@@ -3,9 +3,9 @@
  This module conmtains a class which represent a modal form for specify Search
  and Replace criteria.
 
- @Version 1.0
+ @Version 1.028
  @Author  David Hoyle
- @Date    07 Nov 2018
+ @Date    22 Mar 2020
 
  **)
 Unit SynEditSearchReplaceForm;
@@ -93,6 +93,7 @@ Uses
   {$ENDIF}
   System.UITypes,
   System.Math,
+  SynRegExpr,
   SynEditConfirmationDlgForm;
 
 {$R *.dfm}
@@ -136,6 +137,9 @@ Procedure DoSearchReplaceText(Const Editor: TCustomSynEdit; Const MsgHandler: TS
   Const strFind, strReplace: String; Var Options: TSearchOptions;
   Const RegEng, StdEng: TSynEditSearchCustom; Const boolFindNext: Boolean = False);
 
+ResourceString
+  strRegExError = 'RegEx Error';
+
 Var
   SynEditOps: TSynSearchOptions;
 
@@ -176,9 +180,14 @@ Begin
     UpdateOptions(soEntireScope In Options, ssoEntireScope);
   UpdateOptions(soReplaceAll In Options, ssoReplaceAll);
   UpdateOptions(soReplaceDlg In Options, ssoReplace);
+  Try
   If Editor.SearchReplace(strFind, strReplace, SynEditOps) = 0 Then
     If Assigned(MsgHandler) Then
       MsgHandler(Format(strTextNotFound, [strFind]));
+  Except
+    On E : ERegExpr Do
+      TaskMessageDlg(strRegExError, E.Message, mtError, [mbOK], 0);
+  End;
 End;
 
 (**

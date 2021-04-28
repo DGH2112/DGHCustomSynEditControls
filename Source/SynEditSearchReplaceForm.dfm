@@ -19,12 +19,12 @@ object frmSearchAndReplace: TfrmSearchAndReplace
     469
     347)
   PixelsPerInch = 96
-  TextHeight = 16
+  TextHeight = 13
   object lblTextToFind: TLabel
     Left = 9
     Top = 12
-    Width = 64
-    Height = 16
+    Width = 53
+    Height = 13
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -35,8 +35,8 @@ object frmSearchAndReplace: TfrmSearchAndReplace
   object lblReplaceWith: TLabel
     Left = 9
     Top = 44
-    Width = 77
-    Height = 16
+    Width = 62
+    Height = 13
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
