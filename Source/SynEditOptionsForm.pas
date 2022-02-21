@@ -1,11 +1,11 @@
 ﻿(**
 
   This module contains a for editing the visual, behavioural and highlighting
-  properties of a currently conifgured TSynEdit editor.
+  properties of a currently configured TSynEdit editor.
 
-  @Version 1.0
+  @Version 2.312
   @Author  David Hoyle
-  @Date    11 Nov 2018
+  @Date    21 Feb 2022
 
 **)
 Unit SynEditOptionsForm;
@@ -77,9 +77,9 @@ Type
     **)
     Property Style : TFontStyles Read FStyle Write FStyle;
     (**
-      This property reads and writes the referenced TSynHighlighterAttrubute
+      This property reads and writes the referenced TSynHighlighterAttributes
       @precon  None
-      @postcon Reads and writes the referenced TSynHighlighterAttrubute
+      @postcon Reads and writes the referenced TSynHighlighterAttributes
       @return  a TSynHighlighterAttributes
     **)
     Property Attribute : TSynHighlighterAttributes Read FAttribute Write FAttribute;
@@ -197,6 +197,14 @@ Type
     lblGutterFontName: TLabel;
     lblGutterFontSize: TLabel;
     lblGutterFontColour: TLabel;
+    cbxModifiedSavedColour: TColorBox;
+    lblModifiedSavedLineColour: TLabel;
+    cbxOriginalLineColour: TColorBox;
+    lblOriginalLineColour: TLabel;
+    chkShowLeadingZeros: TCheckBox;
+    edtStartLineNumber: TEdit;
+    udStartLineNumber: TUpDown;
+    lblStartLineNumber: TLabel;
     Procedure lbAttributesClick(Sender: TObject);
     Procedure AttributeChange(Sender: TObject);
     procedure lbAttributesDrawItem(Sender: TWinControl; Index: Integer; Rect: TRect;
@@ -247,41 +255,43 @@ Type
   End;
 
 Const
-  (** A const array of records to place descriptions agains each of the
-      TSynEditorOptions. Use to provide an list of options. **)
-  BehaviouralOptions : Array[Low(TSynEditorOption)..High(TSynEditorOption)] Of
+  (** A constant array of records to place descriptions against each of the
+      TSynEditorOption. Use to provide an list of options. **)
+  BehaviouralOptions : Array[TSynEditorOption] Of
     TSynEditorOptionsRecord = (
-    (Description : '<Alt> key invokes Column Selection Mode'; Value: eoAltSetsColumnMode),
-    (Description : 'Auto Indent';                             Value: eoAutoIndent),
-    (Description : 'Auto Size Max Scroll Width';              Value: eoAutoSizeMaxScrollWidth),
-    (Description : 'Disable Scroll Arrows';                   Value: eoDisableScrollArrows),
-    (Description : 'Drag and Drop Editing';                   Value: eoDragDropEditing),
-    (Description : 'Drag and Drop Files';                     Value: eoDropFiles),
-    (Description : 'Enhanced Home Key';                       Value: eoEnhanceHomeKey),
-    (Description : 'Enhanced End key';                        Value: eoEnhanceEndKey),
-    (Description : 'Group Undo';                              Value: eoGroupUndo),
-    (Description : 'Half Page Scroll';                        Value: eoHalfPageScroll),
-    (Description : 'Hide and Show Scroll Bars';               Value: eoHideShowScrollbars),
-    (Description : 'Keep Caret X';                            Value: eoKeepCaretX),
-    (Description : 'No Caret';                                Value: eoNoCaret),
-    (Description : 'No Selection';                            Value: eoNoSelection),
-    (Description : 'Right Mouse Moves Cursor';                Value: eoRightMouseMovesCursor),
-    (Description : 'Scroll By One Less';                      Value: eoScrollByOneLess),
-    (Description : 'Scroll Hint Follows';                     Value: eoScrollHintFollows),
-    (Description : 'Scroll Past End of File';                 Value: eoScrollPastEof),
-    (Description : 'Scroll Past End of Line';                 Value: eoScrollPastEol),
-    (Description : 'Show Scroll Hints';                       Value: eoShowScrollHint),
-    (Description : 'Show Special Characters';                 Value: eoShowSpecialChars),
-    (Description : 'Smart Tab Delete';                        Value: eoSmartTabDelete),
-    (Description : 'Smart Tabs';                              Value: eoSmartTabs),
-    (Description : 'Special Line Default FG';                 Value: eoSpecialLineDefaultFg),
-    (Description : 'Tab Indent';                              Value: eoTabIndent),
-    (Description : 'Tabs to Spaces';                          Value: eoTabsToSpaces),
-    (Description : 'Trim Trailing Spaces';                    Value: eoTrimTrailingSpaces)
-  );
-
-Var
-  (** A private variable to give the EnumFontProc access to the ComboBox. **)
+    (Description : '<Alt> key invokes Column Selection Mode'; Value: eoAltSetsColumnMode),               //eoAltSetsColumnMode,       //Holding down the Alt Key will put the selection mode into columnar format
+    (Description : 'Auto Indent';                             Value: eoAutoIndent),                      //eoAutoIndent,              //Will indent the caret on new lines with the same amount of leading white space as the preceding line
+    (Description : 'Disable Scroll Arrows';                   Value: eoDisableScrollArrows),             //eoDisableScrollArrows,     //Disables the scroll bar arrow buttons when you can't scroll in that direction any more     
+    (Description : 'Drag and Drop Editing';                   Value: eoDragDropEditing),                 //eoDragDropEditing,         //Allows you to select a block of text and drag it within the document to another location     
+    (Description : 'Drag and Drop Files';                     Value: eoDropFiles),                       //eoDropFiles,               //Allows the editor accept OLE file drops     
+    (Description : 'Enhanced Home Key';                       Value: eoEnhanceHomeKey),                  //eoEnhanceHomeKey,          //enhances home key positioning, similar to visual studio     
+    (Description : 'Enhanced End key';                        Value: eoEnhanceEndKey),                   //eoEnhanceEndKey,           //enhances End key positioning, similar to JDeveloper     
+    (Description : 'Group Undo';                              Value: eoGroupUndo),                       //eoGroupUndo,               //When undoing/redoing actions, handle all continous changes of the same kind in one call instead undoing/redoing each command separately     
+    (Description : 'Half Page Scroll';                        Value: eoHalfPageScroll),                  //eoHalfPageScroll,          //When scrolling with page-up and page-down commands, only scroll a half page at a time     
+    (Description : 'Hide and Show Scroll Bars';               Value: eoHideShowScrollbars),              //eoHideShowScrollbars,      //if enabled, then the scrollbars will only show when necessary.  If you have ScrollPastEOL, then it the horizontal bar will always be there (it uses MaxLength instead)     
+    (Description : 'Keep Caret X';                            Value: eoKeepCaretX),                      //eoKeepCaretX,              //When moving through lines w/o Cursor Past EOL, keeps the X position of the cursor     
+    (Description : 'No Caret';                                Value: eoNoCaret),                         //eoNoCaret,                 //Makes it so the caret is never visible     
+    (Description : 'No Selection';                            Value: eoNoSelection),                     //eoNoSelection,             //Disables selecting text     
+    (Description : 'Right Mouse Moves Cursor';                Value: eoRightMouseMovesCursor),           //eoRightMouseMovesCursor,   //When clicking with the right mouse for a popup menu, move the cursor to that location     
+    (Description : 'Scroll By One Less';                      Value: eoScrollByOneLess),                 //eoScrollByOneLess,         //Forces scrolling to be one less     
+    (Description : 'Scroll Hint Follows';                     Value: eoScrollHintFollows),               //eoScrollHintFollows,       //The scroll hint follows the mouse when scrolling vertically     
+    (Description : 'Scroll Past End of File';                 Value: eoScrollPastEof),                   //eoScrollPastEof,           //Allows the cursor to go past the end of file marker     
+    (Description : 'Scroll Past End of Line';                 Value: eoScrollPastEol),                   //eoScrollPastEol,           //Allows the cursor to go past the last character into the white space at the end of a line     
+    (Description : 'Show Scroll Hints';                       Value: eoShowScrollHint),                  //eoShowScrollHint,          //Shows a hint of the visible line numbers when scrolling vertically     
+    (Description : 'Show Special Characters';                 Value: eoShowSpecialChars),                //eoShowSpecialChars,        //Shows the special Characters     
+    (Description : 'Smart Tab Delete';                        Value: eoSmartTabDelete),                  //eoSmartTabDelete,          //similar to Smart Tabs, but when you delete characters     
+    (Description : 'Smart Tabs';                              Value: eoSmartTabs),                       //eoSmartTabs,               //When tabbing, the cursor will go to the next non-white space character of the previous line     
+    (Description : 'Special Line Default FG';                 Value: eoSpecialLineDefaultFg),            //eoSpecialLineDefaultFg,    //disables the foreground text color override when using the OnSpecialLineColor event     
+    (Description : 'Tab Indent';                              Value: eoTabIndent),                       //eoTabIndent,               //When active <Tab> and <Shift><Tab> act as block indent, unindent when text is selected     
+    (Description : 'Tabs to Spaces';                          Value: eoTabsToSpaces),                    //eoTabsToSpaces,            //Converts a tab character to a specified number of space characters     
+    (Description : 'Trim Trailing Spaces';                    Value: eoTrimTrailingSpaces),              //eoTrimTrailingSpaces,      //Spaces at the end of lines will be trimmed and not saved     
+    (Description : 'Show Ligatures';                          Value: eoShowLigatures),                   //eoShowLigatures,           //Shows font ligatures, by default it is disabled     
+    (Description : 'Copy Plain Text';                         Value: eoCopyPlainText),                   //eoCopyPlainText,           //Do not include additional clipboard formats when you copy to Clipboard or drag text
+    (Description : 'Wrap with Right Edge';                    Value: eoWrapWithRightEdge)                //eoWrapWithRightEdge        //WordWrap with RightEdge position instead of the whole text area
+  );                                                                                                     
+                                                                                                              
+Var                                                                                                      
+  (** A private variable to give the EnumFontProc access to the Combo Box. **)
   FontNames : TComboBox;
 
 (**
@@ -349,10 +359,10 @@ End;
 
 (**
 
-  This method adds a TAttrbute to the collection based on the passed TSynHighlighterAttributes.
+  This method adds a TAttribute to the collection based on the passed TSynHighlighterAttributes.
 
-  @precon  Attr and Parent must be valid instanes of an attribute and highlighter respectively.
-  @postcon Adds a TAttrbute to the collection based on the passed TSynHighlighterAttributes.
+  @precon  Attr and Parent must be valid instances of an attribute and highlighter respectively.
+  @postcon Adds a TAttribute to the collection based on the passed TSynHighlighterAttributes.
 
   @param   Attr   as a TSynHighlighterAttributes as a constant
   @param   Parent as a TSynCustomHighlighter as a constant
@@ -438,10 +448,10 @@ End;
 
 (**
 
-  This method add the attributes of the given highlighters to the attribute collection.
+  This method add the attributes of the given high lighters to the attribute collection.
 
   @precon  Highlighter must be a valid instance.
-  @postcon Add the attributes of the given highlighters to the attribute collection.
+  @postcon Add the attributes of the given high lighters to the attribute collection.
 
   @param   Highlighter as a TSynCustomHighlighter as a constant
 
@@ -524,7 +534,7 @@ End;
   This is the constructor method for the TfrmEditorOptions class.
 
   @precon  None.
-  @postcon Creates an instance of the form and initailises the interface controls.
+  @postcon Creates an instance of the form and initialises the interface controls.
 
   @nocheck MissingCONSTInParam
   
@@ -556,7 +566,7 @@ End;
   This is the destructor method for the TfrmEditorOptions class.
 
   @precon  None.
-  @postcon Frees the memory used fo the highlighter attributes.
+  @postcon Frees the memory used for the highlighter attributes.
 
 **)
 Destructor TfrmEditorOptions.Destroy;
@@ -571,8 +581,8 @@ End;
 
   This is the forms main interface method.
 
-  @precon  Editor must be a valid instance of a TSynEdit cvontrol.
-  @postcon nvokes a form for editing the given instance of the TSynEdit control.
+  @precon  Editor must be a valid instance of a TSynEdit control.
+  @postcon invokes a form for editing the given instance of the TSynEdit control.
 
   @param   OwnerForm  as a TForm as a constant
   @param   Editor     as a TSynEdit as a constant
@@ -631,7 +641,7 @@ End;
   This method saves the dialogue settings to the given SynEdit control and its associated highlighter.
 
   @precon  Editor must be a valid instance.
-  @postcon The dialogues settings are saveed to the SynEdits configuration and its highlighters 
+  @postcon The dialogues settings are saved to the SynEdit`s configuration and its high lighters 
            configuration.
 
   @param   Editor     as a TSynEdit as a constant
@@ -683,7 +693,6 @@ Begin
   Editor.SelectedColor.Background := cbxSelectedBackground.Selected;
   Editor.WantTabs := chkWantTabs.Checked;
   Editor.WordWrap := chkWordWrap.Checked;
-  Editor.MaxScrollWidth := udMaxScrollWidth.Position;
 End;
 
 (**
@@ -715,13 +724,18 @@ Begin
   If chkGutterFontStrikeout.Checked Then
     Editor.Gutter.Font.Style := Editor.Gutter.Font.Style + [fsStrikeout];
   Editor.Gutter.AutoSize := chkAutoSize.Checked;
-  Editor.Gutter.ShowModification := chkShowModifications.Checked;
   Editor.Gutter.ShowLineNumbers := chxLineNumbers.Checked;
+  Editor.Gutter.LeadingZeros := chkShowLeadingZeros.Checked;
+  Editor.Gutter.LineNumberStart := udStartLineNumber.Position;
   Editor.Gutter.Color := cbxGutterColour.Selected;
   Editor.Gutter.BorderColor := cbxGutterBorderColour.Selected;
-  Editor.Gutter.ModificationColorModified := cbxModifiedColour.Selected;
-  Editor.Gutter.ModificationColorSaved := cbxSavedColour.Selected;
-  Editor.Gutter.ModificationBarWidth := upModifiedBarWidth.Position;
+  Editor.Gutter.TrackChanges.Visible := chkShowModifications.Checked;
+  Editor.Gutter.TrackChanges.Width := upModifiedBarWidth.Position;
+  Editor.Gutter.TrackChanges.ModifiedColor := cbxModifiedColour.Selected;
+  Editor.Gutter.TrackChanges.SavedColor := cbxSavedColour.Selected;
+  Editor.Gutter.TrackChanges.SavedModifiedColor := cbxModifiedSavedColour.Selected;
+  Editor.Gutter.TrackChanges.OriginalColor := cbxOriginalLineColour.Selected;
+  Editor.Gutter.DigitCount := udGutterWidth.Position;
 End;
 
 (**
@@ -747,7 +761,7 @@ End;
   highlighter.
 
   @precon  Editor must be a valid instance.
-  @postcon The dialogue is loaded with the SynEdits configuration and its highlighters configuration.
+  @postcon The dialogue is loaded with the SynEdit`s configuration and its high lighters configuration.
 
   @param   Editor as a TSynEdit as a constant
 
@@ -821,7 +835,6 @@ Begin
   cbxSelectedBackground.Selected := Editor.SelectedColor.Background;
   chkWantTabs.Checked := Editor.WantTabs;
   chkWordWrap.Checked := Editor.WordWrap;
-  udMaxScrollWidth.Position := Editor.MaxScrollWidth;
 End;
 
 (**
@@ -850,18 +863,23 @@ Begin
   chkGutterFontUnderline.Checked := fsUnderline In Editor.Gutter.Font.Style;
   chkGutterFontStrikeout.Checked := fsStrikeout In Editor.Gutter.Font.Style;
   chkAutoSize.Checked := Editor.Gutter.AutoSize;
-  chkShowModifications.Checked := Editor.Gutter.ShowModification;
   chxLineNumbers.Checked := Editor.Gutter.ShowLineNumbers;
+  chkShowLeadingZeros.Checked := Editor.Gutter.LeadingZeros;
+  udStartLineNumber.Position := Editor.Gutter.LineNumberStart;
   cbxGutterColour.Selected := Editor.Gutter.Color;
   cbxGutterBorderColour.Selected := Editor.Gutter.BorderColor;
-  cbxModifiedColour.Selected := Editor.Gutter.ModificationColorModified;
-  cbxSavedColour.Selected := Editor.Gutter.ModificationColorSaved;
-  upModifiedBarWidth.Position := Editor.Gutter.ModificationBarWidth;
+  chkShowModifications.Checked := Editor.Gutter.TrackChanges.Visible;
+  upModifiedBarWidth.Position := Editor.Gutter.TrackChanges.Width;
+  cbxModifiedColour.Selected := Editor.Gutter.TrackChanges.ModifiedColor;
+  cbxSavedColour.Selected := Editor.Gutter.TrackChanges.SavedColor;
+  cbxModifiedSavedColour.Selected := Editor.Gutter.TrackChanges.SavedModifiedColor;
+  cbxOriginalLineColour.Selected := Editor.Gutter.TrackChanges.OriginalColor;
+  udGutterWidth.Position := Editor.Gutter.DigitCount;
 End;
 
 (**
 
-  This method initialises the highlighter controls to the settings of the gievn editors highlighter else
+  This method initialises the highlighter controls to the settings of the given editors highlighter else
   the tab is hidden.
 
   @precon  Editor must be a valid instance.
@@ -914,7 +932,7 @@ End;
   This is the attribute list box`s on click event handler.
 
   @precon  None.
-  @postcon Updates the attribute conotrols with the selected attribute in the
+  @postcon Updates the attribute controls with the selected attribute in the
            list box.
 
   @param   Sender as a TObject
@@ -952,7 +970,7 @@ End;
   This is an on raw item event handler for the attribute list.
 
   @precon  None.
-  @postcon Draws each attribute in its own coloures and font style.
+  @postcon Draws each attribute in its own colours and font style.
 
   @param   Sender as a TWinControl
   @param   Index  as an Integer
