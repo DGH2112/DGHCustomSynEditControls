@@ -11,14 +11,12 @@ object frmSearchAndReplace: TfrmSearchAndReplace
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   DesignSize = (
     469
     347)
-  PixelsPerInch = 96
   TextHeight = 13
   object lblTextToFind: TLabel
     Left = 9
