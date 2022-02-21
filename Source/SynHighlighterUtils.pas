@@ -4,8 +4,8 @@
   the loading and saving of the settings.
 
   @Author  David Hoyle
-  @Version 1.0
-  @Date    11 Nov 2018
+  @Version 1.955
+  @Date    21 Feb 2022
   
 **)
 Unit SynHighlighterUtils;
@@ -21,14 +21,10 @@ Type
   (** A record to encapsulate the functions. **)
   TDGHCustomSynEditFunctions = Record
   Strict Private
-    Class Procedure LoadEditorSettings(Const INIFile : TMemIniFile; Const strIniSection : String;
-      Const Editor : TSynEdit); Static;
-    Class Procedure LoadGutterSettings(Const INIFile : TMemIniFile; Const strIniSection : String;
-      Const Editor : TSynEdit); Static;
-    Class Procedure SaveEditorSettings(Const INIFile : TMemIniFile; Const strIniSection : String;
-      Const Editor : TSynEdit); Static;
-    Class Procedure SaveGutterSettings(Const INIFile : TMemIniFile; Const strIniSection : String;
-      Const Editor : TSynEdit); Static;
+    Class Procedure LoadEditorSettings(Const INIFile : TMemIniFile; Const Editor : TSynEdit); Static;
+    Class Procedure LoadGutterSettings(Const INIFile : TMemIniFile; Const Editor : TSynEdit); Static;
+    Class Procedure SaveEditorSettings(Const INIFile : TMemIniFile; Const Editor : TSynEdit); Static;
+    Class Procedure SaveGutterSettings(Const INIFile : TMemIniFile; Const Editor : TSynEdit); Static;
   Public
     Class Function  HighlighterName(Const Highlighter : TSynCustomHighlighter) : String; Static;
     Class Procedure LoadFromIniFile(Const INIFile : TMemIniFile; Const Editor : TSynEdit); Static;
@@ -42,9 +38,9 @@ Type
 Implementation
 
 Uses
-  {$IFDEF DEBUG}
+  {$IFDEF CODESITE}
   CodeSiteLogging,
-  {$ENDIF}
+  {$ENDIF CODESITE}
   System.SysUtils,
   System.Classes,
   System.TypInfo,
@@ -55,8 +51,6 @@ Uses
   SynHighlighterMulti;
 
 Const
-  (** A constant for the default highlighter name. **)
-  strDefaultHighlightName = 'General';
   (** A constant for the INI Key for the Editor Colour **)
   strColourKey = 'Colour';
   (** A constant for the INI Key for the Editor Active Line Colour **)
@@ -69,7 +63,7 @@ Const
   strFontColourKey = 'Font Colour';
   (** A constant for the INI Key for the Editor Font Style **)
   strFontKey = 'Font.';
-  (** A constant for the INI Key for the Editor Wordwrap **)
+  (** A constant for the INI Key for the Editor Word wrap **)
   strWordwrapKey = 'Wordwrap';
   (** A constant for the INI Key for the editor GUtter visibility **)
   strShowGutter = 'Show Gutter';
@@ -83,22 +77,12 @@ Const
   strGutterFontKey = 'Gutter Font.';
   (** A constant for whether the gutter uses the Editor Font or not. **)
   strUseEditorFontKey = 'UseEditorFont';
-  (** A constant for the INI Key for the Editor Gutter Autosize **)
+  (** A constant for the INI Key for the Editor Gutter Auto size **)
   strAutoSizeKey = 'AutoSize';
   (** A constant for the INI Key for the Editor Gutter Width **)
-  strGutterWidthKey = 'Gutter Width';
-  (** A constant for the INI Key for the Editor Gutter Colour **)
   strGutterColourKey = 'Gutter Colour';
   (** A constant for the INI Key for the Editor Gutter Border Colour **)
   strGutterBorderColourKey = 'Gutter Border Colour';
-  (** A constant for the INI Key for the Editor Gutter Modifications **)
-  strShowModificationKey = 'ShowModification';
-  (** A constant for the INI Key for the Editor Gutter Modification Colour **)
-  strModificationColourModifiedKey = 'ModificationColourModified';
-  (** A constant for the INI Key for the Editor Gutter Modification Saved Colour **)
-  strModificationColourSavedKey = 'ModificationColourSaved';
-  (** A constant for the INI Key for the Editor Gutter Modication Bar Width **)
-  strModificationBarWidthKey = 'ModificationBarWidth';
   (** A constant for the INI Key for the Editor Line Numbers **)
   strShowLineNumbersKey = 'Show Line Numbers';
   (** A constant for the INI Key for the Editor Options **)
@@ -115,8 +99,6 @@ Const
   strTabWidthKey = 'Tab Width';
   (** A constant for the INI Key for the Editor Want Tabs **)
   strWantTabsKey = 'WantTabs';
-  (** A constant for the INI Key for the Editor Max Scroll Width **)
-  strMaxScrollWidthKey = 'MaxScrollWidth';
   (** A constant for the INI Key for the Editor Attribute Background Colours **)
   strBackgroundKey = '.Background';
   (** A constant for the INI Key for the Editor Attribute Foreground Colour **)
@@ -127,6 +109,28 @@ Const
   iDefaultFontSize = 11;
   (** A constant to define the default editor font name and gutter font name. **)
   strDefaultFontName = 'Consolas';
+  (** A constant to define whether Tracked Changes are shown. **)
+  strShowTrackedChangesINIKey = 'ShowTrackedChanges';
+  (** A constant to define the colour of Saved Tracked Changes. **)
+  strTrackedChangesSavedColourINIKey = 'TrackedChangesSavedColour';
+  (** A constant to define the colour of Modified Tracked Changes. **)
+  strTrackedChangesModifiedColourINIKey = 'TrackedChangesModifiedColour';
+  (** A constant to define the colour of Saved Modified Tracked Changes. **)
+  strTrackedChangesSavedModifiedColourINIKey = 'TrackedChangesSavedModifiedColour';
+  (** A constant to define the colour of Original Tracked Changes. **)
+  strTrackedChangesOriginalColourINIKey = 'TrackedChangesOriginalColour';
+  (** A constant for the INI Editor Settings Section. **)
+  strIniSection = 'EditorSettings';
+  (** A constant for the INI Key for the number of digits for line numbers in the gutter. **)
+  strDigitCountINIKey = 'DigitCount';
+  (** A constant for the INI Key whether leading zeros are shown for line numbers in the gutter. **)
+  strLeadingZerosINIKey = 'LeadingZeros';
+  (** A constant for the INI Key whether line numbers start at in the gutter. **)
+  strZeroStartINIKey = 'ZeroStart';
+  (** A constant for the INI Key what line numbers start at in the gutter. **)
+  strLineNumberStartINIKey = 'LineNumberStart';
+  (** A constant for the INI Key for the width of the tracked changes bar in the gutter. **)
+  strTrackedChangeBarWdithINIKey = 'TrackedChangeBarWdith';
 
 (**
 
@@ -170,20 +174,20 @@ End;
   @postcon The Editors base settings are loaded from the INI File.
 
   @param   INIFile       as a TMemIniFile as a constant
-  @param   strIniSection as a String as a constant
   @param   Editor        as a TSynEdit as a constant
 
 **)
 Class Procedure TDGHCustomSynEditFunctions.LoadEditorSettings(Const INIFile: TMemIniFile;
-  Const strIniSection: String; Const Editor: TSynEdit);
+  Const Editor: TSynEdit);
 
 Const
   iDefaultRightMargin = 80;
   iDefaultSpacePerTab = 2;
-  iDefaultMaxScrollWidth = 8192;
-  DefaultOptions = [eoAltSetsColumnMode, eoAutoIndent, eoAutoSizeMaxScrollWidth, eoDragDropEditing,
+  DefaultOptions = [eoAltSetsColumnMode, eoAutoIndent, eoDragDropEditing,
     eoEnhanceHomeKey, eoEnhanceEndKey, eoGroupUndo, eoScrollHintFollows, eoScrollPastEof,
-    eoScrollPastEol, eoShowScrollHint, eoSmartTabs, eoTabIndent, eoTabsToSpaces, eoTrimTrailingSpaces];
+    eoScrollPastEol, eoShowScrollHint, eoSmartTabs, eoTabIndent, eoTabsToSpaces, eoTrimTrailingSpaces,
+    eoShowLigatures, eoCopyPlainText
+  ];
 
 Var
   eStyle : TFontStyle;
@@ -217,9 +221,6 @@ Begin
     strSelectedBackgroundKey, ColorToString(clHighlight)));
   Editor.TabWidth := INIFile.ReadInteger(strIniSection, strTabWidthKey, iDefaultSpacePerTab);
   Editor.WantTabs := INIFile.ReadBool(strIniSection, strWantTabsKey, True);
-  Editor.MaxScrollWidth := INIFile.ReadInteger(strIniSection, strMaxScrollWidthKey,
-    iDefaultMaxScrollWidth);
-  Editor.FontSmoothing := fsmClearType;
 End;
 
 (**
@@ -237,16 +238,10 @@ End;
 Class Procedure TDGHCustomSynEditFunctions.LoadFromIniFile(Const INIFile : TMemIniFile;
   Const Editor : TSynEdit);
 
-Var
-  strIniSection : String;
-  
 Begin
   {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.LoadFromIniFile', tmoTiming);{$ENDIF}
-  strIniSection := IfThen(Assigned(Editor.Highlighter), HighlighterName(Editor.Highlighter),
-    strDefaultHighlightName);
-  LoadEditorSettings(INIFile, strIniSection, Editor);
-  LoadGutterSettings(INIFile, strIniSection, Editor);
-  LoadHighlighterFromINIFile(INIFile, Editor.Highlighter);
+  LoadEditorSettings(INIFile, Editor);
+  LoadGutterSettings(INIFile, Editor);
 End;
 
 (**
@@ -254,19 +249,18 @@ End;
   This method loads the given editors gutter settings from the INI file.
 
   @precon  INIFile and Editor must be valid instances.
-  @postcon The Editors gutter setings are loade from the INI file.
+  @postcon The Editors gutter settings are loaded from the INI file.
 
   @param   INIFile       as a TMemIniFile as a constant
-  @param   strIniSection as a String as a constant
   @param   Editor        as a TSynEdit as a constant
 
 **)
 Class Procedure TDGHCustomSynEditFunctions.LoadGutterSettings(Const INIFile : TMemIniFile;
-  Const strIniSection : String; Const Editor : TSynEdit);
+  Const Editor : TSynEdit);
 
 Const
-  iDefaultGutterWidth = 30;
-  iDefaultModificationBarWidth = 4;
+  iDefaultDigitCount = 4;
+  iDefaultTrackChangesBarWidth = 4;
 
 Var
   eStyle : TFontStyle;
@@ -284,27 +278,35 @@ Begin
       False) Then
       Editor.Font.Style := Editor.Font.Style +  [eStyle];
   Editor.Gutter.AutoSize := INIFile.ReadBool(strIniSection, strAutoSizeKey, False);
-  Editor.Gutter.Width := INIFile.ReadInteger(strIniSection, strGutterWidthKey, iDefaultGutterWidth);
   Editor.Gutter.Color := StringToColor(INIFile.ReadString(strIniSection, strGutterColourKey,
     ColorToString(clBtnFace)));
   Editor.Gutter.BorderColor := StringToColor(INIFile.ReadString(strIniSection, strGutterBorderColourKey,
     ColorToString(clWindow)));
-  Editor.Gutter.ShowModification := INIFile.ReadBool(strIniSection, strShowModificationKey, True);
-  Editor.Gutter.ModificationColorModified := StringToColor(INIFile.ReadString(strIniSection,
-    strModificationColourModifiedKey, ColorToString(clRed)));
-  Editor.Gutter.ModificationColorSaved := StringToColor(INIFile.ReadString(strIniSection,
-    strModificationColourSavedKey, ColorToString(clGreen)));
-  Editor.Gutter.ModificationBarWidth := INIFile.ReadInteger(strIniSection, strModificationBarWidthKey,
-    iDefaultModificationBarWidth);
   Editor.Gutter.ShowLineNumbers := INIFile.ReadBool(strIniSection, strShowLineNumbersKey, True);
+  Editor.Gutter.TrackChanges.Visible := INIFile.ReadBool(strIniSection, strShowTrackedChangesINIKey,
+    True);
+  Editor.Gutter.TrackChanges.Width := INIFile.ReadInteger(strIniSection, strTrackedChangeBarWdithINIKey,
+    iDefaultTrackChangesBarWidth);
+  Editor.Gutter.TrackChanges.SavedColor := StringToColor(INIFile.ReadString(strIniSection,
+    strTrackedChangesSavedColourINIKey, ColorToString(clLime)));
+  Editor.Gutter.TrackChanges.ModifiedColor := StringToColor(INIFile.ReadString(strIniSection,
+    strTrackedChangesModifiedColourINIKey, ColorToString(clRed)));
+  Editor.Gutter.TrackChanges.SavedModifiedColor := StringToColor(INIFile.ReadString(strIniSection,
+    strTrackedChangesSavedModifiedColourINIKey, ColorToString(clYellow)));
+  Editor.Gutter.TrackChanges.OriginalColor := StringToColor(INIFile.ReadString(strIniSection,
+    strTrackedChangesOriginalColourINIKey, ColorToString(clFuchsia)));
+  Editor.Gutter.DigitCount := INIFile.ReadInteger(strIniSection, strDigitCountINIKey, iDefaultDigitCount);
+  Editor.Gutter.LeadingZeros := INIFile.ReadBool(strIniSection, strLeadingZerosINIKey, False);
+  Editor.Gutter.ZeroStart := INIFile.ReadBool(strIniSection, strZeroStartINIKey, False);
+  Editor.Gutter.LineNumberStart := INIFile.ReadInteger(strIniSection, strLineNumberStartINIKey, 1);
 End;
 
 (**
 
-  This method loads the given highlighter information from the given ini file.
+  This method loads the given highlighter information from the given INI file.
 
   @precon  INIFile and Highlighter must be valid instances.
-  @postcon Loads the given highlighter information from the given ini file.
+  @postcon Loads the given highlighter information from the given INI file.
 
   @param   INIFile     as a TMemIniFile as a constant
   @param   Highlighter as a TSynCustomHighlighter as a constant
@@ -382,12 +384,11 @@ end;
   @postcon The Editors base settings are saved to the INI File.
 
   @param   INIFile       as a TMemIniFile as a constant
-  @param   strIniSection as a String as a constant
   @param   Editor        as a TSynEdit as a constant
 
 **)
 Class Procedure TDGHCustomSynEditFunctions.SaveEditorSettings(Const INIFile: TMemIniFile;
-  Const strIniSection: String; Const Editor: TSynEdit);
+  Const Editor: TSynEdit);
 
 Var
   eStyle : TFontStyle;
@@ -415,7 +416,6 @@ Begin
     ColorToString(Editor.SelectedColor.Background));
   INIFile.WriteInteger(strIniSection, strTabWidthKey, Editor.TabWidth);
   INIFile.WriteBool(strIniSection, strWantTabsKey, Editor.WantTabs);
-  INIFile.WriteInteger(strIniSection, strMaxScrollWidthKey, Editor.MaxScrollWidth);
 End;
 
 (**
@@ -423,15 +423,14 @@ End;
   This method saves the given editors gutter settings to the INI file.
 
   @precon  INIFile and Editor must be valid instances.
-  @postcon The Editors gutter setings are saved to the INI file.
+  @postcon The Editors gutter settings are saved to the INI file.
 
   @param   INIFile       as a TMemIniFile as a constant
-  @param   strIniSection as a String as a constant
   @param   Editor        as a TSynEdit as a constant
 
 **)
 Class Procedure TDGHCustomSynEditFunctions.SaveGutterSettings(Const INIFile: TMemIniFile;
-  Const strIniSection: String; Const Editor: TSynEdit);
+  Const Editor: TSynEdit);
 
 Var
   eStyle: TFontStyle;
@@ -447,24 +446,31 @@ Begin
     INIFile.WriteBool(strIniSection, strGutterFontKey + GetEnumName(TypeInfo(TFontStyle), Ord(eStyle)),
       eStyle In Editor.Gutter.Font.Style);
   INIFile.WriteBool(strIniSection, strAutoSizeKey, Editor.Gutter.AutoSize);
-  INIFile.WriteInteger(strIniSection, strGutterWidthKey, Editor.Gutter.Width);
   INIFile.WriteString(strIniSection, strGutterColourKey, ColorToString(Editor.Gutter.Color));
   INIFile.WriteString(strIniSection, strGutterBorderColourKey, ColorToString(Editor.Gutter.BorderColor));
-  INIFile.WriteBool(strIniSection, strShowModificationKey, Editor.Gutter.ShowModification);
-  INIFile.WriteString(strIniSection, strModificationColourModifiedKey,
-    ColorToString(Editor.Gutter.ModificationColorModified));
-  INIFile.WriteString(strIniSection, strModificationColourSavedKey,
-    ColorToString(Editor.Gutter.ModificationColorSaved));
-  INIFile.WriteInteger(strIniSection, strModificationBarWidthKey, Editor.Gutter.ModificationBarWidth);
   INIFile.WriteBool(strIniSection, strShowLineNumbersKey, Editor.Gutter.ShowLineNumbers);
+  INIFile.WriteBool(strIniSection, strShowTrackedChangesINIKey, Editor.Gutter.TrackChanges.Visible);
+  INIFile.WriteInteger(strIniSection, strTrackedChangeBarWdithINIKey, Editor.Gutter.TrackChanges.Width);
+  INIFile.WriteString(strIniSection, strTrackedChangesSavedColourINIKey,
+    ColorToString(Editor.Gutter.TrackChanges.SavedColor));
+  INIFile.WriteString(strIniSection, strTrackedChangesModifiedColourINIKey,
+    ColorToString(Editor.Gutter.TrackChanges.ModifiedColor));
+  INIFile.WriteString(strIniSection, strTrackedChangesSavedModifiedColourINIKey,
+    ColorToString(Editor.Gutter.TrackChanges.SavedModifiedColor));
+  INIFile.WriteString(strIniSection, strTrackedChangesOriginalColourINIKey,
+    ColorToString(Editor.Gutter.TrackChanges.OriginalColor));
+  INIFile.WriteInteger(strIniSection, strDigitCountINIKey, Editor.Gutter.DigitCount);
+  INIFile.WriteBool(strIniSection, strLeadingZerosINIKey, Editor.Gutter.LeadingZeros);
+  INIFile.WriteBool(strIniSection, strZeroStartINIKey, Editor.Gutter.ZeroStart);
+  INIFile.WriteInteger(strIniSection, strLineNumberStartINIKey, Editor.Gutter.LineNumberStart);
 End;
 
 (**
 
-  This method saves the given highlighter to the given ini file.
+  This method saves the given highlighter to the given INI file.
 
   @precon  INIFile and Highlighter must be valid instances.
-  @postcon Saves the given highlighter to the given ini file.
+  @postcon Saves the given highlighter to the given INI file.
 
   @param   INIFile     as a TMemIniFile as a constant
   @param   Highlighter as a TSynCustomHighlighter as a constant
@@ -541,16 +547,10 @@ End;
 Class Procedure TDGHCustomSynEditFunctions.SaveToIniFile(Const INIFile : TMemIniFile;
   Const Editor : TSynEdit);
 
-Var
-  strIniSection : String;
-  
 Begin
   {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.SaveToIniFile', tmoTiming);{$ENDIF}
-  strIniSection := IfThen(Assigned(Editor.Highlighter), HighlighterName(Editor.Highlighter), 
-    strDefaultHighlightName);
-  SaveEditorSettings(INIFile, strIniSection, Editor);
-  SaveGutterSettings(INIFile, strIniSection, Editor);
-  SaveHighlighterToINIFile(INIFile, Editor.Highlighter);
+  SaveEditorSettings(INIFile, Editor);
+  SaveGutterSettings(INIFile, Editor);
   INIFile.UpdateFile();
 End;
 
