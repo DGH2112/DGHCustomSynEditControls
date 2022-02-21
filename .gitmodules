@@ -1,3 +1,3 @@
-[submodule "SynEdit 2.1.0"]
-	path = SynEdit 2.1.0
-	url = https://github.com/DGH2112/SynEdit-2-1-0-with-Theming
+[submodule "TurboPack-SynEdit"]
+	path = TurboPack-SynEdit
+	url = https://github.com/TurboPack/SynEdit
