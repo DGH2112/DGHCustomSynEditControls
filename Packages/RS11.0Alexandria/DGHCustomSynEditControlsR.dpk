@@ -1,0 +1,48 @@
+package DGHCustomSynEditControlsR;
+
+{$R *.res}
+{$IFDEF IMPLICITBUILDING This IFDEF should not be used by users}
+{$ALIGN 8}
+{$ASSERTIONS ON}
+{$BOOLEVAL OFF}
+{$DEBUGINFO OFF}
+{$EXTENDEDSYNTAX ON}
+{$IMPORTEDDATA ON}
+{$IOCHECKS ON}
+{$LOCALSYMBOLS ON}
+{$LONGSTRINGS ON}
+{$OPENSTRINGS ON}
+{$OPTIMIZATION OFF}
+{$OVERFLOWCHECKS OFF}
+{$RANGECHECKS OFF}
+{$REFERENCEINFO ON}
+{$SAFEDIVIDE OFF}
+{$STACKFRAMES ON}
+{$TYPEDADDRESS OFF}
+{$VARSTRINGCHECKS ON}
+{$WRITEABLECONST OFF}
+{$MINENUMSIZE 1}
+{$IMAGEBASE $400000}
+{$DEFINE DEBUG}
+{$ENDIF IMPLICITBUILDING}
+{$DESCRIPTION 'DGH Custom SynEdit Controls 1.0 (RunTime)'}
+{$LIBSUFFIX 'RS110'}
+{$RUNONLY}
+{$IMPLICITBUILD ON}
+
+requires
+  rtl,
+  vcl,
+  vclx,
+  SynEditDR,
+  vclimg;
+
+contains
+  SynEditConfirmationDlgForm in '..\..\Source\SynEditConfirmationDlgForm.pas' {frmConfirmationDlg},
+  SynEditSearchReplaceForm in '..\..\Source\SynEditSearchReplaceForm.pas' {frmSearchAndReplace},
+  SynHighlighterBNF in '..\..\Source\SynHighlighterBNF.pas',
+  SynHighlighterMD in '..\..\Source\SynHighlighterMD.pas',
+  SynEditOptionsForm in '..\..\Source\SynEditOptionsForm.pas' {frmEditorOptions},
+  SynHighlighterUtils in '..\..\Source\SynHighlighterUtils.pas';
+
+end.

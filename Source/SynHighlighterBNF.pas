@@ -11,7 +11,7 @@
 Unit SynHighlighterBNF;
 {$ENDIF}
 
-{$I SynEdit.inc}
+{$I ..\TurboPack-SynEdit\Source\SynEdit.inc}
 
 Interface
 

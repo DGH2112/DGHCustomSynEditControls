@@ -11,13 +11,11 @@ object frmConfirmationDlg: TfrmConfirmationDlg
   Font.Height = -11
   Font.Name = 'MS Sans Serif'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   DesignSize = (
     396
     93)
-  PixelsPerInch = 96
-  TextHeight = 16
+  TextHeight = 13
   object imIcon: TImage
     Left = 8
     Top = 8

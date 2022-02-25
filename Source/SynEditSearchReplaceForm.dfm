@@ -46,7 +46,7 @@ object frmSearchAndReplace: TfrmSearchAndReplace
     Left = 122
     Top = 9
     Width = 338
-    Height = 24
+    Height = 21
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4
@@ -58,7 +58,7 @@ object frmSearchAndReplace: TfrmSearchAndReplace
     Left = 122
     Top = 41
     Width = 338
-    Height = 24
+    Height = 21
     Margins.Left = 4
     Margins.Top = 4
     Margins.Right = 4

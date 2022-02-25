@@ -11,7 +11,7 @@
 Unit SynHighlighterMD;
 {$ENDIF}
 
-{$I SynEdit.inc}
+{$I ..\TurboPack-SynEdit\Source\SynEdit.inc}
 
 Interface
 
@@ -210,7 +210,7 @@ Resourcestring
   SYNS_AttrItalic = 'Italic';
   (** A resource string for the Bold attribute name. **)
   SYNS_AttrBold = 'Bold';
-  (** A resource string for the Monospac attribute name. **)
+  (** A resource string for the Mono spaced attribute name. **)
   SYNS_AttrMonospace = 'Monospace';
   (** A resource string for the Bullet attribute name. **)
   SYNS_AttrBullet = 'Bullet';
@@ -323,7 +323,7 @@ End;
   This method processes a carriage return character.
 
   @precon  None.
-  @postcon A carriage return chacracter is processed.
+  @postcon A carriage return character is processed.
 
 **)
 Procedure TSynMDSyn.CRProc;
@@ -391,7 +391,7 @@ End;
 
 (**
 
-  This is a getter method for the DefaultAttribute property.
+  This is a getter method for the Default Attribute property.
 
   @precon  None.
   @postcon Returns the indexed default attribute.
@@ -415,7 +415,7 @@ End;
 
 (**
 
-  This is a getter method for the Eol property.
+  This is a getter method for the EOL property.
 
   @precon  None.
   @postcon Returns true if the Run property is 1 beyond the end of the line.
@@ -431,7 +431,7 @@ End;
 
 (**
 
-  This is a getter method for the Friendlt=yLanguageName property.
+  This is a getter method for the Friendly Language Name property.
 
   @precon  None.
   @postcon Returns the name of the language being highlighted.
@@ -447,7 +447,7 @@ End;
 
 (**
 
-  This is a getter method for the LanguageName property.
+  This is a getter method for the Language Name property.
 
   @precon  None.
   @postcon Returns the name of the language.
@@ -479,7 +479,7 @@ End;
 
 (**
 
-  This is a getter method for the SampleSource property.
+  This is a getter method for the Sample Source property.
 
   @precon  None.
   @postcon Returns a sample of text for the language.
@@ -489,7 +489,7 @@ End;
 **)
 Function TSynMDSyn.GetSampleSource: String;
 
-ResourceString
+Const
   strSampleSource =
     '#'#13#10 +
     '# This is a comment header for the Markdown file'#13#10 +
@@ -536,7 +536,7 @@ End;
 
 (**
 
-  This is a getter method for the TokenAttribute property.
+  This is a getter method for the Token Attribute property.
 
   @precon  None.
   @postcon Returns the attribute associated with the current Token ID.
@@ -552,7 +552,7 @@ End;
 
 (**
 
-  This is a getter method for the TokenID property.
+  This is a getter method for the Token ID property.
 
   @precon  None.
   @postcon Returns the current token ID.
@@ -568,7 +568,7 @@ End;
 
 (**
 
-  This is a getter method for the TokenKind property.
+  This is a getter method for the Token Kind property.
 
   @precon  None.
   @postcon Returns the token ID as an integer.
@@ -620,7 +620,7 @@ End;
 
 (**
 
-  This method checks that there are only spaces or tabs before the gievn character index on the current
+  This method checks that there are only spaces or tabs before the given character index on the current
   line.
 
   @precon  None.
@@ -671,11 +671,11 @@ End;
 
 (**
 
-  This method processes a Line Feed character and sets the TokenID and Range if not within amy other
+  This method processes a Line Feed character and sets the Token ID and Range if not within any other
   ranges.
 
   @precon  None.
-  @postcon the Line Feed is processed and the TokenID and Range set if appropriate.
+  @postcon the Line Feed is processed and the Token ID and Range set if appropriate.
 
 **)
 Procedure TSynMDSyn.LFProc;
@@ -691,11 +691,11 @@ End;
 
 (**
 
-  This method checks to see if the asterik character that triggered this call is followed by another and
+  This method checks to see if the asterisk character that triggered this call is followed by another and
   therefore we are string a BOLD section or is just a symbol.
 
   @precon  None.
-  @postcon Starts a bold section of there are more than one asterik.
+  @postcon Starts a bold section of there are more than one asterisk.
 
 **)
 Procedure TSynMDSyn.MDBoldBulletOpenProc;
@@ -718,10 +718,10 @@ End;
 
 (**
 
-  This method process the BOLD chacratcer sequence until it finds an ending doube asterik.
+  This method process the BOLD character sequence until it finds an ending double asterisk.
 
   @precon  None.
-  @postcon Process the BOLD charcater sequence until completion.
+  @postcon Process the BOLD character sequence until completion.
 
 **)
 Procedure TSynMDSyn.MDBoldProc;
@@ -938,7 +938,7 @@ End;
 
 (**
 
-  This is a setter method for the XxxxxxxAttri property.
+  This is a setter method for the XxxxxxAttri property.
 
   @precon  None.
   @postcon The given attribute is set.
@@ -976,7 +976,7 @@ End;
   This method processes a space token.
 
   @precon  None.
-  @postcon The run property is incremented and TokenID set to space. If there are more spaces these are
+  @postcon The run property is incremented and Token ID set to space. If there are more spaces these are
            processed.
 
 **)
@@ -994,8 +994,8 @@ End;
   This method processes a symbol token.
 
   @precon  None.
-  @postcon The run property is incremented and TokenID set to symbol. If there are more symbosl these are
-           processed.
+  @postcon The run property is incremented and Token ID set to symbol. If there are more symbols these
+           are processed.
 
 **)
 Procedure TSynMDSyn.SymbolProc;

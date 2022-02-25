@@ -3,8 +3,8 @@
   This module contains the registration code for the components and a splash screen for the IDE.
 
   @Author  David Hoyle
-  @Version 1.0
-  @Date    01 Dec 2018
+  @Version 1.003
+  @Date    25 Feb 2022
   
 **)
 Unit DGHCustomSynEditControlsReg;
@@ -28,7 +28,6 @@ Uses
   VCL.Forms,
   VCL.Dialogs,
   SynHighlighterBNF,
-  SynHighlighterRegEx,
   SynHighlighterMD;
 
 Type
@@ -138,7 +137,7 @@ Begin
         ''
       );
     End;
-  RegisterComponents(strDGHCustomSynEditControls, [TSynRegExSyn, TSynBNFSyn, TSynMDSyn]);
+  RegisterComponents(strDGHCustomSynEditControls, [TSynBNFSyn, TSynMDSyn]);
 End;
 
 End.

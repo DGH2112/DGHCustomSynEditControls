@@ -1,11 +1,11 @@
 (**
   
-  This module contains a class whivh represents a form for confirming the replacement of text in the
+  This module contains a class which represents a form for confirming the replacement of text in the
   synedit editor.
 
-  @Version 1.0
+  @Version 1.001
   @Author  David Hoyle
-  @Date    26 Jan 2018
+  @Date    25 Feb 2022
 
 **)
 Unit SynEditConfirmationDlgForm;
@@ -54,7 +54,7 @@ Var
 ResourceString
   (** A resource string which represents the text to be displayed to the user
       when text needs to the replaced. **)
-  strReplaceText = 'Are you sure you want to replace this occurance of "%s" with "%s"?';
+  strReplaceText = 'Are you sure you want to replace this occurrence of "%s" with "%s"?';
 
 (**
 
@@ -86,7 +86,7 @@ Const
     This function calculates the horizontal position of the dialogue.
 
     @precon  None.
-    @postcon The horizontal posistion of the dialogue is returned.
+    @postcon The horizontal position of the dialogue is returned.
 
     @param   iW     as an Integer as a constant
     @param   iWidth as an Integer as a constant
@@ -106,10 +106,10 @@ Const
 
   (**
 
-    This function calculates the vertcical position of the dialogue.
+    This function calculates the vertical position of the dialogue.
 
     @precon  None.
-    @postcon The vertical posistion of the dialogue is returned.
+    @postcon The vertical position of the dialogue is returned.
 
     @param   iY1     as an Integer as a constant
     @param   iY2     as an Integer as a constant

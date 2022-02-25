@@ -1,11 +1,11 @@
 (**
 
- This module conmtains a class which represent a modal form for specify Search
+ This module contains a class which represent a modal form for specify Search
  and Replace criteria.
 
- @Version 1.052
+ @Version 1.073
  @Author  David Hoyle
- @Date    05 Feb 2022
+ @Date    25 Feb 2022
 
  **)
 Unit SynEditSearchReplaceForm;
@@ -38,10 +38,10 @@ Type
   (** This is a set of Search Find and Replace dialogue options. **)
   TSearchOptions = Set Of TSearchOption;
 
-  (** A message handler for DoSearchAndReplace. **)
+  (** A message handler for Do Search And Replace. **)
   TSearchReplaceMsgProc = Procedure(Const strMsg: String) Of Object;
 
-  (** A clas to represent a form for prompting the user for Search and Replace
+  (** A class to represent a form for prompting the user for Search and Replace
    information. **)
   TfrmSearchAndReplace = Class(TForm)
     lblTextToFind: TLabel;
@@ -93,7 +93,6 @@ Uses
   {$ENDIF CODESITE}
   System.UITypes,
   System.Math,
-  //: @debug SynRegExpr,
   SynEditConfirmationDlgForm;
 
 {$R *.dfm}
@@ -103,15 +102,15 @@ ResourceString
   strTextNotFound = 'The text "%s" was not found.';
 
 Const
-  (** An ini section name for search and replace search strings. **)
+  (** An INI section name for search and replace search strings. **)
   strSearchAndReplaceSearchStrings = 'SearchAndReplace\SearchStrings';
-  (** An ini section name for search and replace replace strings. **)
+  (** An INI section name for search and replace replace strings. **)
   strSearchAndReplaceReplaceStrings = 'SearchAndReplace\ReplaceStrings';
-  (** An ini section name for search and replace dialogue position. **)
+  (** An INI section name for search and replace dialogue position. **)
   strSearchAndReplace = 'SearchAndReplace';
-  (** An ini key for the top position. **)
+  (** An INI key for the top position. **)
   strTopKey = 'Top';
-  (** An ini key for the left position. **)
+  (** An INI key for the left position. **)
   strLeftKey = 'Left';
 
 (**
@@ -138,7 +137,7 @@ Procedure DoSearchReplaceText(Const Editor: TCustomSynEdit; Const MsgHandler: TS
   Const RegEng, StdEng: TSynEditSearchCustom; Const boolFindNext: Boolean = False);
 
 ResourceString
-  strRegExError = 'RegEx Error';
+  strRegExError = 'Regular Expression Error';
 
 Var
   SynEditOps: TSynSearchOptions;
@@ -193,11 +192,11 @@ End;
 
 (**
 
-  This procedure should be invokes from the applications OnEditFindAction ( or similar event) to search 
-  the passed editor for the passed text.
+  This procedure should be invokes from the applications On Edit Find Action ( or similar event) to
+  search the passed editor for the passed text.
 
   @precon  Editor must be a valid TCustomSynEdit control.
-  @postcon Search the passed editor for the pased text.
+  @postcon Search the passed editor for the passed text.
 
   @param   AOwner     as a TForm as a constant
   @param   Editor     as a TCustomSynEdit as a constant
@@ -234,11 +233,11 @@ End;
 
 (**
 
-  This procedure should be invokes from the applications OnEditFindNextAction (or similar event) to 
-  search the passed editor for the next occurrance of the passed text.
+  This procedure should be invokes from the applications On Edit Find Next Action (or similar event) to 
+  search the passed editor for the next occurrence of the passed text.
 
   @precon  Editor must be a valid TCustomSynEdit control.
-  @postcon Search the passed editor for the next occurrance of the pased text.
+  @postcon Search the passed editor for the next occurrence of the passed text.
 
   @param   Editor     as a TCustomSynEdit as a constant
   @param   MsgHandler as a TSearchReplaceMsgProc as a constant
@@ -261,8 +260,8 @@ End;
 
 (**
 
-  This procedure should be invokes from the applications OnEditReplaceAction (or similar event) to search
-  the passed editor for the passed text and replace them with the passed text.
+  This procedure should be invokes from the applications On Edit Replace Action (or similar event) to
+  search the passed editor for the passed text and replace them with the passed text.
 
   @precon  Editor must be a valid TCustomSynEdit control.
   @postcon Search the passed editor for the passed text and replace them with the passed text.
@@ -303,7 +302,7 @@ End;
 (**
 
   This procedure should be called from the applications event handler which handles the TCustomSynEdit 
-  controls OnReplaceText event. If necessary prompts the user to confirm the replacement of text.
+  controls On Replace Text event. If necessary prompts the user to confirm the replacement of text.
 
   @precon  Editor must be a valid TCustomSynEdit control.
   @postcon If necessary prompts the user to confirm the replacement of text.
@@ -359,7 +358,7 @@ Procedure TfrmSearchAndReplace.btnOKClick(Sender: TObject);
 
   (**
 
-    This function determines oif the text is valid and not already in the list.
+    This function determines if the text is valid and not already in the list.
 
     @precon  None.
     @postcon Returns true if the text is valid (i.e. not null) and not already in the list.
@@ -397,8 +396,7 @@ End;
 
   This is the constructor method for the TfrmSearchAndReplace class.
 
-  @precon  strRootKey must be a valid regsiter entry where information from the dialogue should be 
-           stored.
+  @precon  INIFile must be a valid instance.
   @postcon Constructs an instance of the class.
 
   @param   AOwner  as a TComponent as a constant
@@ -418,7 +416,7 @@ End;
   This is the forms main interface method.
 
   @precon  none.
-  @postcon Initialises the dialogur with the search settings and returns the Search and Replace texts 
+  @postcon Initialises the dialogue with the search settings and returns the Search and Replace texts 
            which are to be used.
 
   @param   AOwner     as a Tform as a constant
