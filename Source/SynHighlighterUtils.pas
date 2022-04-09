@@ -4,8 +4,8 @@
   the loading and saving of the settings.
 
   @Author  David Hoyle
-  @Version 1.955
-  @Date    21 Feb 2022
+  @Version 1.961
+  @Date    09 Apr 2022
   
 **)
 Unit SynHighlighterUtils;
@@ -211,7 +211,9 @@ Begin
   For eOption := Low(TSynEditorOption) To High(TSynEditorOption) Do
     If INIFile.ReadBool(strIniSection, strOptionsKey + GetEnumName(TypeInfo(TSynEditorOption),
       Ord(eOption)), eOption In DefaultOptions) Then
-      Editor.Options := Editor.Options + [eOption];
+      Editor.Options := Editor.Options + [eOption]
+    Else
+      Editor.Options := Editor.Options - [eOption];
   Editor.RightEdge := INIFile.ReadInteger(strIniSection, strRightEdgeKey, iDefaultRightMargin);
   Editor.RightEdgeColor := StringToColor(INIFile.ReadString(strIniSection, strRightEdgeColourKey,
     ColorToString(clMaroon)));
