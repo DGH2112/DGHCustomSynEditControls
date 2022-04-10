@@ -4,8 +4,8 @@
   the loading and saving of the settings.
 
   @Author  David Hoyle
-  @Version 1.961
-  @Date    09 Apr 2022
+  @Version 1.985
+  @Date    10 Apr 2022
   
 **)
 Unit SynHighlighterUtils;
@@ -242,8 +242,13 @@ Class Procedure TDGHCustomSynEditFunctions.LoadFromIniFile(Const INIFile : TMemI
 
 Begin
   {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.LoadFromIniFile', tmoTiming);{$ENDIF}
-  LoadEditorSettings(INIFile, Editor);
-  LoadGutterSettings(INIFile, Editor);
+  Editor.BeginUpdate;
+  Try
+    LoadEditorSettings(INIFile, Editor);
+    LoadGutterSettings(INIFile, Editor);
+  Finally
+    Editor.EndUpdate;
+  End;
 End;
 
 (**
@@ -352,30 +357,35 @@ Var
 
 begin
   {$IFDEF CODESITE}CodeSite.TraceMethod('TDGHCustomSynEditFunctions.LoadHighlighterFromINIFile', tmoTiming);{$ENDIF}
-  If Assigned(Highlighter) Then
-    Begin
-      If Highlighter Is TSynMultiSyn Then
-        Begin
-          M := Highlighter As TSynMultiSyn;
-          If M.DefaultHighlighter.Tag < 0 Then
-            LoadHighlighterFromINIFile(INIFile, M.DefaultHighlighter);
-          For iScheme := 0 To M.Schemes.Count - 1 Do
-            Begin
-              S := M.Schemes[iScheme] As TScheme;
-              A := S.MarkerAttri;
-              strName := Format('%s:%s', [S.SchemeName, A.Name]);
-              LoadAttribute(A, HighlighterName(M), strName);
-              If Highlighter.Tag < 0 Then
-                LoadHighlighterFromINIFile(INIFile, S.Highlighter);
-            End;
-        End Else
-          For iAttr := 0 To Highlighter.AttrCount - 1 Do
-            Begin
-              A := Highlighter.Attribute[iAttr];
-              LoadAttribute(A, HighlighterName(Highlighter), A.Name);
-            End;
-      Highlighter.Tag := 0;
-    End;
+  Highlighter.BeginUpdate;
+  Try
+    If Assigned(Highlighter) Then
+      Begin
+        If Highlighter Is TSynMultiSyn Then
+          Begin
+            M := Highlighter As TSynMultiSyn;
+            If M.DefaultHighlighter.Tag < 0 Then
+              LoadHighlighterFromINIFile(INIFile, M.DefaultHighlighter);
+            For iScheme := 0 To M.Schemes.Count - 1 Do
+              Begin
+                S := M.Schemes[iScheme] As TScheme;
+                A := S.MarkerAttri;
+                strName := Format('%s:%s', [S.SchemeName, A.Name]);
+                LoadAttribute(A, HighlighterName(M), strName);
+                If Highlighter.Tag < 0 Then
+                  LoadHighlighterFromINIFile(INIFile, S.Highlighter);
+              End;
+          End Else
+            For iAttr := 0 To Highlighter.AttrCount - 1 Do
+              Begin
+                A := Highlighter.Attribute[iAttr];
+                LoadAttribute(A, HighlighterName(Highlighter), A.Name);
+              End;
+        Highlighter.Tag := 0;
+      End;
+  Finally
+    Highlighter.EndUpdate;
+  End;    
 end;
 
 (**
