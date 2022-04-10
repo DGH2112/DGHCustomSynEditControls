@@ -27,10 +27,9 @@ object frmEditorOptions: TfrmEditorOptions
     Margins.Top = 4
     Margins.Right = 4
     Margins.Bottom = 4
-    ActivePage = tabGutter
+    ActivePage = tabSyntax
     Anchors = [akLeft, akTop, akRight, akBottom]
     TabOrder = 0
-    ExplicitHeight = 539
     object tabEditor: TTabSheet
       Margins.Left = 4
       Margins.Top = 4
@@ -1004,7 +1003,7 @@ object frmEditorOptions: TfrmEditorOptions
         Text = '0'
       end
       object udStartLineNumber: TUpDown
-        Left = 436
+        Left = 437
         Top = 327
         Width = 16
         Height = 24
@@ -1039,7 +1038,6 @@ object frmEditorOptions: TfrmEditorOptions
         Margins.Bottom = 4
         Anchors = [akLeft, akTop, akRight, akBottom]
         TabOrder = 0
-        ExplicitHeight = 497
       end
     end
     object tabCommands: TTabSheet
@@ -1072,7 +1070,6 @@ object frmEditorOptions: TfrmEditorOptions
         ParentDoubleBuffered = False
         TabOrder = 0
         ViewStyle = vsReport
-        ExplicitHeight = 438
       end
     end
     object tabSyntax: TTabSheet
@@ -1155,7 +1152,6 @@ object frmEditorOptions: TfrmEditorOptions
         TabOrder = 0
         OnClick = lbAttributesClick
         OnDrawItem = lbAttributesDrawItem
-        ExplicitHeight = 432
       end
       object cbxAttrForeColour: TColorBox
         Left = 262
@@ -1169,7 +1165,7 @@ object frmEditorOptions: TfrmEditorOptions
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
         Anchors = [akTop, akRight]
         TabOrder = 1
-        OnChange = AttributeChange
+        OnSelect = AttributeChange
       end
       object cbxAttrBackColour: TColorBox
         Left = 262
@@ -1183,7 +1179,7 @@ object frmEditorOptions: TfrmEditorOptions
         Style = [cbStandardColors, cbExtendedColors, cbSystemColors, cbIncludeNone, cbIncludeDefault, cbCustomColor, cbPrettyNames]
         Anchors = [akTop, akRight]
         TabOrder = 2
-        OnChange = AttributeChange
+        OnSelect = AttributeChange
       end
       object grpFontStyles: TGroupBox
         Left = 262
@@ -1197,7 +1193,6 @@ object frmEditorOptions: TfrmEditorOptions
         Anchors = [akTop, akRight, akBottom]
         Caption = 'Attribute Font Styles'
         TabOrder = 3
-        ExplicitHeight = 339
         object cbxBold: TCheckBox
           Left = 10
           Top = 30
@@ -1266,7 +1261,6 @@ object frmEditorOptions: TfrmEditorOptions
     Kind = bkOK
     NumGlyphs = 2
     TabOrder = 1
-    ExplicitTop = 556
   end
   object btnCancel: TBitBtn
     Left = 400
@@ -1281,6 +1275,5 @@ object frmEditorOptions: TfrmEditorOptions
     Kind = bkCancel
     NumGlyphs = 2
     TabOrder = 2
-    ExplicitTop = 556
   end
 end

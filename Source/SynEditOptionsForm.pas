@@ -3,9 +3,9 @@
   This module contains a for editing the visual, behavioural and highlighting
   properties of a currently configured TSynEdit editor.
 
-  @Version 2.312
+  @Version 2.316
   @Author  David Hoyle
-  @Date    21 Feb 2022
+  @Date    10 Apr 2022
 
 **)
 Unit SynEditOptionsForm;
@@ -525,6 +525,7 @@ Begin
             UpdateStyle(A, fsItalic, cbxItalic.Checked);
             UpdateStyle(A, fsUnderline, cbxUnderlined.Checked);
             UpdateStyle(A, fsStrikeOut, cbxStrikeout.Checked);
+            lbAttributes.Invalidate;
           End;
       End;
 End;
